@@ -1,0 +1,35 @@
+{
+    "name": "mark\/orm",
+    "description": "Orm system",
+    "autoload": {
+        "psr-4": {
+            "markorm\\": "src\/"
+        }
+    },
+    "authors": [
+        {
+            "name": "II",
+            "email": "no_soap_0@mail.ru"
+        }
+    ],
+    "require": {
+        "markdi\/markdi": "^3.0",
+        "vlucas\/phpdotenv": "^5.6",
+        "composer\/class-map-generator": "^1.1"
+    },
+    "scripts": {
+        "mark": "php vendor\/bin\/mark",
+        "post-install-cmd": [
+            "chmod +x bin\/mark-orm-build-scheme",
+            "markorm\\_system\\Commands::createMarkOrmScript"
+        ],
+        "post-update-cmd": [
+            "chmod +x bin\/mark-orm-build-scheme",
+            "markorm\\_system\\Commands::createMarkOrmScript"
+        ],
+        "build-scheme": "php vendor\/bin\/mark-orm-build-scheme"
+    },
+    "bin": [
+        "bin\/mark-orm-build-scheme"
+    ]
+}

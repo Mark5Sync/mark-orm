@@ -1,0 +1,34 @@
+#!/usr/bin/env php
+<?php
+
+use markorm\_system\ShemeBuilController;
+
+
+require $_composer_autoload_path;
+$composerJsonPath = findComposerJson($_composer_bin_dir);
+
+
+if ($composerJsonPath) { 
+    $composerJson = json_decode(file_get_contents("$composerJsonPath/composer.json"), true);
+    new ShemeBuilController($composerJsonPath, $composerJson['autoload']['psr-4']);
+} else {
+    echo "Composer.json not found.\n";
+    exit(1);
+}
+
+// Функция для поиска файла composer.json вверх по директориям
+function findComposerJson($dir)
+{
+    while ($dir !== '/' && $dir !== \DIRECTORY_SEPARATOR) {
+        $composerJsonPath = $dir . \DIRECTORY_SEPARATOR . 'composer.json';
+        if (file_exists($composerJsonPath)) {
+            return $dir;
+        }
+
+        $dir = \dirname($dir);
+    }
+
+    return null;
+}
+
+exit(0);
