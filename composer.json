@@ -1,5 +1,5 @@
 {
-    "name": "mark\/orm",
+    "name": "marksync\/orm",
     "description": "Orm system",
     "autoload": {
         "psr-4": {
