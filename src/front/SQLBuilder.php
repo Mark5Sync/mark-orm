@@ -185,7 +185,7 @@ class SQLBuilder
         foreach ($colls as $coll => $collAs) {
             $select[] = $option == 'selectAs'
                 ? "$coll as $collAs"
-                : "$coll";
+                : "$collAs";
         }
 
 
