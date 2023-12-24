@@ -85,6 +85,7 @@ class SQLBuilder
     function reset()
     {
         $this->request = [];
+        $this->whereBuilder->reset();
     }
 
 

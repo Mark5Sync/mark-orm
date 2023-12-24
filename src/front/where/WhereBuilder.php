@@ -17,7 +17,7 @@ class WhereBuilder
         $this->options[] = $this->whereOption($option, $props);
     }
 
-    function clear(){
+    function reset(){
         $this->options = [];
     }
     
