@@ -26,17 +26,14 @@ class WhereBuilder
         $this->tableName = $name;
     }
 
-    function getWhere(): ?string
+    function getWhere(): array
     {
-        if (empty($this->options))
-            return null;
-
         $result = [];
         foreach ($this->options as $option) {
             $result[] = $option->toSQL();
         }
-
-        return implode(' AND ', $result);
+        
+        return $result;
     }
 
 }

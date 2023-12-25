@@ -14,22 +14,19 @@ class SQLBuilder
 
     private string $description = '';
     private string $table;
+
     private $request = [];
     private $propsValues = [];
-
     private $select = [];
 
 
-    
-
-    function join(Model $model, string $references, string $fields){
+    function join(Model $model, string $references, string $fields)
+    {
         $this->joinBuilder->push(
             $model,
             $references,
             $fields,
         );
-
-        
     }
 
     function setTable(string $table)
@@ -37,7 +34,6 @@ class SQLBuilder
         $this->table = $table;
         $this->whereBuilder->setTableName($table);
         $this->joinBuilder->setTableName($table);
-
     }
 
     function select(array $colls, bool $as = false)
@@ -190,26 +186,11 @@ class SQLBuilder
 
     private function getSelect()
     {
-        ['option' => $option, 'colls' => $colls] = isset($this->request['select'])
-            ? $this->request['select']
-            : ['option' => 'select', 'colls' => []];
-
-        $select = [];
-        foreach ($colls as $coll => $collAs) {
-            $select[] = $option == 'selectAs'
-                ? "{$this->table}.$coll as $collAs"
-                : "{$this->table}.$collAs";
-        }
-
-
+        $select     = $this->getSelectBlock();
         $blockJoin  = $this->joinBuilder->toSQL();
         $blockWhere = $this->getBlockWhere();
 
-
-
-        $select = implode(', ', $select);
-        $select = $select ? $select : '*';
-
+        $select = !empty($select) ? implode(', ', $select) : '*';
 
         $sql = "SELECT $select FROM $this->table $blockJoin $blockWhere";
 
@@ -217,11 +198,41 @@ class SQLBuilder
     }
 
 
+    function getSelectBlock(): array
+    {
+        ['option' => $option, 'colls' => $colls] = isset($this->request['select'])
+            ? $this->request['select']
+            : ['option' => 'select', 'colls' => []];
 
-    private function getBlockWhere(){
+        $select = [];
+
+        foreach ($colls as $coll => $collAs) {
+            $select[] = $option == 'selectAs'
+                ? "{$this->table}.$coll as $collAs"
+                : "{$this->table}.$collAs";
+        }
+
+        $select = [...$select, ...$this->joinBuilder->getSelect()];
+
+        return $select;
+    }
+
+
+    private function getBlockWhere()
+    {
         $result = '';
-        if ($where = $this->whereBuilder->getWhere())
-            $result = " WHERE $where";
+        if ($where = $this->whereMix())
+            $result = " WHERE " . implode(' AND ', $where);
+
+        return $result;
+    }
+
+
+    function whereMix()
+    {
+        $result = $this->whereBuilder->getWhere();
+
+        $result = [...$result, ...$this->joinBuilder->getWhere()];
 
         return $result;
     }
@@ -230,7 +241,7 @@ class SQLBuilder
 
     function getProps(): array | null
     {
-        $props = [...$this->propsValues];
+        $props = [...$this->propsValues, ...$this->joinBuilder->getProps()];
 
         $result = empty($props) ? null : $props;
         $this->propsValues = [];
@@ -246,7 +257,8 @@ class SQLBuilder
     }
 
 
-    function desc(string $description){
+    function desc(string $description)
+    {
         $this->description = "/* $description */\n";
     }
 }

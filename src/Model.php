@@ -46,7 +46,14 @@ abstract class Model
 
     protected function selectAs___($props)
     {
-        $this->sqlBuilder->select($props, true);
+        $colls = [];
+        foreach ($props as $coll => $collAs) {
+            if (!$collAs)
+                continue;
+
+            $colls[$coll] = $collAs;
+        }
+        $this->sqlBuilder->select($colls, true);
     }
 
     protected function where___($props)
@@ -90,7 +97,7 @@ abstract class Model
     public function join___(Model $model, ?string $references = null, ?string $fields = null)
     {
         $table = $model->table;
-        if (!$references || !$fields){
+        if (!$references || !$fields) {
             if (!$this->relationship || !isset($this->relationship[$table]))
                 throw new \Exception("No relationships configured for the table $table [JOIN]", 1);
 
@@ -174,7 +181,6 @@ abstract class Model
             throw new \Exception("Undefined OPERATOR [$operator]", 1);
 
         $this->sqlBuilder->pushWhere($operator, null);
-        
     }
 
 
