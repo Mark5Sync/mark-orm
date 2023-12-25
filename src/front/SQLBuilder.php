@@ -97,11 +97,6 @@ class SQLBuilder
     }
 
 
-    function reset()
-    {
-        $this->request = [];
-        $this->whereBuilder->reset();
-    }
 
 
     function getSQL(): string
@@ -243,12 +238,18 @@ class SQLBuilder
     {
         $props = [...$this->propsValues, ...$this->joinBuilder->getProps()];
 
-        $result = empty($props) ? null : $props;
-        $this->propsValues = [];
-
-
-        return $result;
+        return $props;
     }
+
+
+    function reset()
+    {
+        $this->request = [];
+        $this->propsValues = [];
+        $this->whereBuilder->reset();
+        $this->joinBuilder->reset();
+    }
+
 
 
     function __toString()

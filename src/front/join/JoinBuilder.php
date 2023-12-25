@@ -79,4 +79,10 @@ class JoinBuilder
 
         return $result;
     }
+
+
+
+    function reset(){
+        $this->joins = [];
+    }
 }
