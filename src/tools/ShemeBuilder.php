@@ -10,17 +10,33 @@ use markdi\ReflectionMark;
 class ShemeBuilder
 {
     private ?ReflectionMark $connection;
+    private ?array $relationship;
 
-    function __construct(private string $table, private array $tableProps)
+
+    function __construct(
+        private string $table,
+        private array $tableProps,
+
+    ) {}
+
+
+    function injectConnection(ReflectionMark $connection)
     {
-    }
-
-
-    function injectConnection(ReflectionMark $connection){
         $this->connection = $connection;
         return $this;
     }
 
+    function setRelationship(?array $relationship){
+        $this->relationship = $relationship;
+        return $this;
+    }
+
+    function getRelationship(): string {
+        if (!$this->relationship)
+            return 'null';
+
+        return var_export($this->relationship, true);
+    }
 
     function createAbstractModel($folder, $namespace)
     {
@@ -31,6 +47,9 @@ class ShemeBuilder
 
     function getCode($class, $namespace)
     {
+
+        $rel = $this->getRelationship();
+        
         return <<<PHP
         <?php
 
@@ -42,9 +61,7 @@ class ShemeBuilder
         abstract class $class extends Model {
             use {$this->connection->marker};
 
-            protected \$relation = [];
-
-
+            protected ?array \$relationship = {$rel};
 
             public string \$table = '{$this->table}';
             protected string \$connectionProp = '{$this->connection->prop}'; 
@@ -72,8 +89,9 @@ class ShemeBuilder
         {$this->createTunelMethod('update', 'auto', ' ... SET id = 1 ', returnThis: false)}
         {$this->createTunelMethod('insert', 'auto', ' ... INSERT (id) VALUES(1) ', returnThis: false)}
 
-            function desc(string \$title){
-                \$this->desc___(\$title);
+            function desc(string \$description)
+            {
+                \$this->desc___(\$description);
                 return \$this;
             }
 
@@ -81,6 +99,18 @@ class ShemeBuilder
             {
 
                 \$this->applyOperator___(\$name);
+            }
+
+            function join(Model \$model)
+            {
+                \$this->join___(\$model);
+                return \$this;
+            }
+
+            function joinOn(string \$fields, Model \$model, string \$references)
+            {
+                \$this->join(\$model, \$references, \$fields);
+                return \$this;
             }
 
         }
@@ -116,7 +146,7 @@ class ShemeBuilder
 
         $body = "\$this->{$methodName}___([$select
         ]);";
-        $body = $returnThis ? "$body$split return \$this;": "return $body";
+        $body = $returnThis ? "$body$split return \$this;" : "return $body";
 
         return <<<PHP
         
@@ -133,14 +163,15 @@ class ShemeBuilder
     }
 
 
-    private function getMethodProps($propType, $colls, $default, $nullType){
+    private function getMethodProps($propType, $colls, $default, $nullType)
+    {
 
-        if ($propType == 'auto'){
+        if ($propType == 'auto') {
             $props = [];
             foreach ($this->tableProps as $coll) {
                 $props[] = $this->convertToPHPType($coll['type']) . " \${$coll['coll']}{$default}";
             }
-    
+
             $split = "\n\t\t\t?";
             $props =  $split . implode(",$split", $props);
             return $props;
@@ -158,15 +189,19 @@ class ShemeBuilder
     private function convertToPHPType($sqlType)
     {
         switch ($sqlType) {
-            case 'int': return 'int';
-            case 'date': return 'string';
+            case 'int':
+                return 'int';
+            case 'date':
+                return 'string';
 
             case 'float':
-            case 'decimal': return 'float';
+            case 'decimal':
+                return 'float';
 
             case 'text':
             case 'longtext':
-            case 'varchar': return 'string';
+            case 'varchar':
+                return 'string';
 
             default:
                 throw new \Exception("UNDEFINED Type [$sqlType]", 1);

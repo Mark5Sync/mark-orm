@@ -25,11 +25,13 @@ class ShemeBuilController
                 echo "\use connection $connectionClass\n";
 
                 $tables = $this->findTables();
+                $relationship = $this->getRelationship();
 
                 foreach ($tables as $table => $tableProps) {
                     $this->shemeBuilder($table, $tableProps)
-                         ->injectConnection($this->pdoMark)
-                         ->createAbstractModel($projectFolder, $projectNamespace);
+                        ->injectConnection($this->pdoMark)
+                        ->setRelationship(isset($relationship[$table]) ? $relationship[$table] : null)
+                        ->createAbstractModel($projectFolder, $projectNamespace);
                 }
             }
         }
@@ -114,6 +116,52 @@ class ShemeBuilController
             unset($row['table']);
             $result[$table][] = $row;
         }
+
+        return $result;
+    }
+
+    private function getRelationship()
+    {
+        $smtp = $this->pdo->prepare("
+            SELECT
+                table_name,
+                column_name,
+                referenced_table_name,
+                referenced_column_name
+            FROM
+                information_schema.key_column_usage
+
+            WHERE referenced_table_name is not NULL
+        ");
+
+        $smtp->execute();
+
+        $result = [];
+        $primarys = [];
+
+        foreach ($smtp->fetchAll(\PDO::FETCH_ASSOC) as $row) {
+            [
+                'table_name' => $table,
+                'column_name' => $coll,
+                'referenced_table_name' => $reference,
+                'referenced_column_name' => $referenced_column,
+            ] = $row;
+
+
+
+
+
+            $result[$table][$reference] = [
+                'coll' => $coll,
+                'referenced' => $referenced_column,
+            ];
+
+            $result[$reference][$table] = [
+                'coll' => $referenced_column,
+                'referenced' => $coll,
+            ];
+        }
+
 
         return $result;
     }

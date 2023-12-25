@@ -2,10 +2,11 @@
 
 namespace markorm\front\where;
 
+use markdi\Mark;
 use markorm\_markers\front;
 
 
-
+#[Mark(mode: Mark::LOCAL)]
 class WhereBuilder
 {
     use front;
@@ -14,7 +15,7 @@ class WhereBuilder
     private $tableName = false;
 
     function push($option, $props){
-        $this->options[] = $this->whereOption($option, $props);
+        $this->options[] = $this->whereOption($option, $props, $this->tableName);
     }
 
     function reset(){

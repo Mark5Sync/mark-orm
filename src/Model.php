@@ -9,9 +9,11 @@ abstract class Model
     use front;
 
 
-    protected string $table;
+    public string $table;
     protected string $connectionProp;
     private ?string $sql;
+
+    protected ?array $relationship = null;
 
 
 
@@ -85,19 +87,27 @@ abstract class Model
     }
 
 
-    public function join(Model $model)
+    public function join___(Model $model, ?string $references = null, ?string $fields = null)
     {
-        $this->sqlBuilder->push('join', $model);
+        $table = $model->table;
+        if (!$references || !$fields){
+            if (!$this->relationship || !isset($this->relationship[$table]))
+                throw new \Exception("No relationships configured for the table $table [JOIN]", 1);
+
+            [
+                'coll' => $fields,
+                'referenced' => $references,
+            ] = $this->relationship[$table];
+        }
+
+
+        $this->sqlBuilder->join(
+            $model,
+            $references,
+            $fields,
+        );
     }
 
-    public function joinOn(string $fields, Model $model, string $references)
-    {
-        $this->sqlBuilder->push('joinOn', [
-            'model' => $model,
-            'fields' => $fields,
-            'references' => $references,
-        ]);
-    }
 
     public function apply(): bool
     {

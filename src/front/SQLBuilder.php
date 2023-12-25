@@ -4,21 +4,40 @@ namespace markorm\front;
 
 use markdi\Mark;
 use markorm\_markers\front;
+use markorm\Model;
 
 #[Mark('sqlBuilder', mode: Mark::LOCAL)]
 class SQLBuilder
 {
     use front;
 
+
+    private string $description = '';
     private string $table;
     private $request = [];
     private $propsValues = [];
 
     private $select = [];
 
+
+    
+
+    function join(Model $model, string $references, string $fields){
+        $this->joinBuilder->push(
+            $model,
+            $references,
+            $fields,
+        );
+
+        
+    }
+
     function setTable(string $table)
     {
         $this->table = $table;
+        $this->whereBuilder->setTableName($table);
+        $this->joinBuilder->setTableName($table);
+
     }
 
     function select(array $colls, bool $as = false)
@@ -122,7 +141,7 @@ class SQLBuilder
 
         $this->reset();
 
-        return $result;
+        return "{$this->description}{$result}";
     }
 
 
@@ -167,13 +186,6 @@ class SQLBuilder
     }
 
 
-    private function getBlockWhere(){
-        $result = '';
-        if ($where = $this->whereBuilder->getWhere())
-            $result = " WHERE $where";
-
-        return $result;
-    }
 
 
     private function getSelect()
@@ -185,21 +197,33 @@ class SQLBuilder
         $select = [];
         foreach ($colls as $coll => $collAs) {
             $select[] = $option == 'selectAs'
-                ? "$coll as $collAs"
-                : "$collAs";
+                ? "{$this->table}.$coll as $collAs"
+                : "{$this->table}.$collAs";
         }
 
 
+        $blockJoin  = $this->joinBuilder->toSQL();
         $blockWhere = $this->getBlockWhere();
+
 
 
         $select = implode(', ', $select);
         $select = $select ? $select : '*';
 
 
-        $sql = "SELECT $select FROM $this->table $blockWhere";
+        $sql = "SELECT $select FROM $this->table $blockJoin $blockWhere";
 
         return $sql;
+    }
+
+
+
+    private function getBlockWhere(){
+        $result = '';
+        if ($where = $this->whereBuilder->getWhere())
+            $result = " WHERE $where";
+
+        return $result;
     }
 
 
@@ -219,5 +243,10 @@ class SQLBuilder
     function __toString()
     {
         return $this->getSql();
+    }
+
+
+    function desc(string $description){
+        $this->description = "/* $description */\n";
     }
 }

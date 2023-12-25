@@ -24,22 +24,22 @@ class WhereOption
         switch ($this->option) {
             case 'where':
                 foreach ($this->props as $coll) {
-                    $result[] = "$coll[coll] = :$coll[dataColl]";
+                    $result[] = "{$this->tableName}.$coll[coll] = :$coll[dataColl]";
                 }
                 break;
             case 'like':
                 foreach ($this->props as $coll) {
-                    $result[] = "$coll[coll] LIKE :$coll[dataColl]";
+                    $result[] = "{$this->tableName}.$coll[coll] LIKE :$coll[dataColl]";
                 }
                 break;
             case 'in':
                 foreach ($this->props as $coll) {
-                    $result[] = "$coll[coll] IN (:$coll[dataColl])";
+                    $result[] = "{$this->tableName}.$coll[coll] IN (:$coll[dataColl])";
                 }
                 break;
             case 'regexp':
                 foreach ($this->props as $coll) {
-                    $result[] = "$coll[coll] REGEXP :$coll[dataColl]";
+                    $result[] = "{$this->tableName}.$coll[coll] REGEXP :$coll[dataColl]";
                 }
                 break;
             case 'or':
@@ -50,8 +50,4 @@ class WhereOption
         return implode(' AND ', $result);
     }
 
-    function __toString()
-    {
-        return $this->toSQL();
-    }
 }
