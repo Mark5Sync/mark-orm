@@ -189,4 +189,15 @@ abstract class Model
         $this->sql = &$sql;
         return $this;
     }
+
+
+
+    function startTransition(){
+        $this->getPDO()->pdo->beginTransaction();
+
+        return [
+            fn() => $this->getPDO()->pdo->commit(),
+            fn() => $this->getPDO()->pdo->rollBack(),
+        ];
+    }
 }
