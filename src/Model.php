@@ -192,7 +192,7 @@ abstract class Model
 
 
 
-    function startTransition(){
+    function transaction(){
         $this->getPDO()->pdo->beginTransaction();
 
         return [
