@@ -109,7 +109,7 @@ class ShemeBuilder
 
             function joinOn(string \$fields, Model \$model, string \$references)
             {
-                \$this->join(\$model, \$references, \$fields);
+                \$this->join___(\$model, \$references, \$fields);
                 return \$this;
             }
 
