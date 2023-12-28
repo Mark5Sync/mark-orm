@@ -193,11 +193,11 @@ abstract class Model
 
 
     function transaction(){
-        $this->getPDO()->pdo->beginTransaction();
+        $this->getPDO()->beginTransaction();
 
         return [
-            fn() => $this->getPDO()->pdo->commit(),
-            fn() => $this->getPDO()->pdo->rollBack(),
+            fn() => $this->getPDO()->commit(),
+            fn() => $this->getPDO()->rollBack(),
         ];
     }
 }

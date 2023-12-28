@@ -17,7 +17,7 @@ class SQLBuilder
 
     private $request = [];
     private $propsValues = [];
-    private $select = [];
+    private $selected = [];
 
 
     function join(Model $model, string $references, string $fields)
@@ -38,10 +38,8 @@ class SQLBuilder
 
     function select(array $colls, bool $as = false)
     {
-        $this->request['select'] = [
-            'option' => $as ? 'selectAs' : 'select',
-            'colls' => $colls
-        ];
+        $key = $as ? 'selectAs' : 'select';
+        $this->selected[$key] = $colls;
     }
 
     function push($option, $props, $add = false)
@@ -195,16 +193,14 @@ class SQLBuilder
 
     function getSelectBlock(): array
     {
-        ['option' => $option, 'colls' => $colls] = isset($this->request['select'])
-            ? $this->request['select']
-            : ['option' => 'select', 'colls' => []];
-
         $select = [];
 
-        foreach ($colls as $coll => $collAs) {
-            $select[] = $option == 'selectAs'
-                ? "{$this->table}.$coll as $collAs"
-                : "{$this->table}.$collAs";
+        foreach ($this->selected as $key => $colls) {
+            foreach ($colls as $as => $coll) {
+                $select[] = $key == 'selectAs'
+                    ? "{$this->table}.$as as $coll"
+                    : "{$this->table}.$coll";
+            }
         }
 
         $select = [...$select, ...$this->joinBuilder->getSelect()];
