@@ -39,7 +39,9 @@ class SQLBuilder
     function select(array $colls, bool $as = false)
     {
         $key = $as ? 'selectAs' : 'select';
-        $this->selected[$key] = $colls;
+        $sel = isset($this->selected[$key]) ? $this->selected[$key] : [];
+        $result = [...$sel, ...$colls];
+        $this->selected[$key] = $as ? $result : array_unique($result);
     }
 
     function push($option, $props, $add = false)
