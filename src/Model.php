@@ -156,7 +156,7 @@ abstract class Model
 
     private function replace_props($query, $props){
         foreach ($props as $prop => $value) {
-            $query = str_replace(":$prop", var_export($value), $query);
+            $query = str_replace(":$prop", var_export($value, true), $query);
         }
 
         return $query;
