@@ -12,6 +12,7 @@ abstract class Model
     public string $table;
     protected string $connectionProp;
     private ?string $sql;
+    public $debugQuery = false;
 
     protected ?array $relationship = null;
 
@@ -27,12 +28,12 @@ abstract class Model
         return $this->{$this->connectionProp}->pdo;
     }
 
-    public function select___(array $props)
+    public function ___select(array $props)
     {
         $this->sqlBuilder->select($props);
     }
 
-    protected function sel___($props)
+    protected function ___sel($props)
     {
         $colls = [];
         foreach ($props as $coll => $pass) {
@@ -44,7 +45,7 @@ abstract class Model
         $this->sqlBuilder->select($colls);
     }
 
-    protected function selectAs___($props)
+    protected function ___selectAs($props)
     {
         $colls = [];
         foreach ($props as $coll => $collAs) {
@@ -56,27 +57,27 @@ abstract class Model
         $this->sqlBuilder->select($colls, true);
     }
 
-    protected function where___($props)
+    protected function ___where($props)
     {
         $this->sqlBuilder->pushWhere('where', $props);
     }
 
-    protected function like___($props)
+    protected function ___like($props)
     {
         $this->sqlBuilder->pushWhere('like', $props);
     }
 
-    protected function regexp___($props)
+    protected function ___regexp($props)
     {
         $this->sqlBuilder->pushWhere('regexp', $props);
     }
 
-    protected function in___($props)
+    protected function ___in($props)
     {
         $this->sqlBuilder->pushWhere('in', $props);
     }
 
-    protected function fwhere___($props)
+    protected function ___fwhere($props)
     {
         $this->sqlBuilder->pushWhere('where', $props);
     }
@@ -94,7 +95,7 @@ abstract class Model
     }
 
 
-    public function join___(Model $model, ?string $references = null, ?string $fields = null)
+    public function ___join(Model $model, ?string $references = null, ?string $fields = null)
     {
         $table = $model->table;
         if (!$references || !$fields) {
@@ -139,7 +140,8 @@ abstract class Model
         $props = $this->sqlBuilder->getProps();
         $sql = $this->sqlBuilder->getSQL();
 
-        $this->sql = $sql;
+        if ($this->debugQuery)
+            $this->sql = $this->replace_props($sql, $props);
 
         $stmt = $this->getPDO()->prepare($sql);
         try {
@@ -152,15 +154,22 @@ abstract class Model
     }
 
 
+    private function replace_props($query, $props){
+        foreach ($props as $prop => $value) {
+            $query = str_replace(":$prop", var_export($value), $query);
+        }
+
+        return $query;
+    }
 
 
-    protected function update___($props): bool
+    protected function ___update($props): bool
     {
         $this->sqlBuilder->push('update', $props);
         return !!$this->exec();
     }
 
-    protected function insert___($props): int
+    protected function ___insert($props): int
     {
         $this->sqlBuilder->push('insert', $props);
         $this->exec();
@@ -175,7 +184,7 @@ abstract class Model
     }
 
 
-    protected function applyOperator___($operator)
+    protected function ___applyOperator($operator)
     {
         if (!in_array($operator, ['or']))
             throw new \Exception("Undefined OPERATOR [$operator]", 1);

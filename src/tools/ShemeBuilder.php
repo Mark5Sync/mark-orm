@@ -67,7 +67,7 @@ class ShemeBuilder
             protected string \$connectionProp = '{$this->connection->prop}'; 
 
             function select(...\$props){
-                \$this->select___(\$props);
+                \$this->___select(\$props);
                 return \$this;
             }
 
@@ -91,25 +91,25 @@ class ShemeBuilder
 
             function desc(string \$description)
             {
-                \$this->desc___(\$description);
+                \$this->___desc(\$description);
                 return \$this;
             }
 
             function ___get(\$name)
             {
 
-                \$this->applyOperator___(\$name);
+                \$this->___applyOperator(\$name);
             }
 
             function join(Model \$model)
             {
-                \$this->join___(\$model);
+                \$this->___join(\$model);
                 return \$this;
             }
 
             function joinOn(string \$fields, Model \$model, string \$references)
             {
-                \$this->join___(\$model, \$references, \$fields);
+                \$this->___join(\$model, \$references, \$fields);
                 return \$this;
             }
 
@@ -144,7 +144,7 @@ class ShemeBuilder
         $select = $split . implode(",$split", array_map(fn ($coll) => "'$coll' => \$$coll", $colls));
 
 
-        $body = "\$this->{$methodName}___([$select
+        $body = "\$this->___{$methodName}([$select
         ]);";
         $body = $returnThis ? "$body$split return \$this;" : "return $body";
 
