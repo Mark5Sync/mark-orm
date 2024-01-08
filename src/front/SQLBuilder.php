@@ -155,11 +155,11 @@ class SQLBuilder
             $this->request['update']
         ));
 
-
+        $blockJoin  = $this->joinBuilder->toSQL();
         $blockWhere = $this->getBlockWhere();
 
 
-        $sql = "UPDATE $this->table SET $props $blockWhere";
+        $sql = "UPDATE $this->table $blockJoin SET $props  $blockWhere";
 
 
 

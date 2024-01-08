@@ -140,14 +140,13 @@ abstract class Model
         $props = $this->sqlBuilder->getProps();
         $sql = $this->sqlBuilder->getSQL();
 
-        if ($this->debugQuery)
-            $this->sql = $this->replace_props($sql, $props);
+        $this->sql = $this->replace_props($sql, $props);
 
         $stmt = $this->getPDO()->prepare($sql);
         try {
             $stmt->execute($props);
         } catch (\Throwable $th) {
-            exit("\nERROR:\n\n >$sql \n\n" . $th->getMessage());
+            exit("\nERROR:\n\n [\n$this->sql\n]\n\n" . $th->getMessage());
         }
 
         return $stmt;
