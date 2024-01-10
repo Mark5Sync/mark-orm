@@ -78,6 +78,10 @@ class SQLBuilder
 
             $dataColl = "{$option}_{$coll}";
 
+            if ($value == 'NULL') {
+                $value = null;
+            }
+
             $result[$dataColl] = [
                 'coll' => $coll,
                 'dataColl' => $dataColl,
