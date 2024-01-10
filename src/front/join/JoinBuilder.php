@@ -83,6 +83,9 @@ class JoinBuilder
 
 
     function reset(){
+        foreach ($this->joins as $join) {
+            $join['model']->sqlBuilder->reset();
+        }
         $this->joins = [];
     }
 }

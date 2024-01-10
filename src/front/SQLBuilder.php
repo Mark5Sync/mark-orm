@@ -244,6 +244,7 @@ class SQLBuilder
     {
         $this->request = [];
         $this->propsValues = [];
+        $this->selected = [];
         $this->whereBuilder->reset();
         $this->joinBuilder->reset();
     }
