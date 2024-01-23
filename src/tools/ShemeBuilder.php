@@ -113,6 +113,22 @@ class ShemeBuilder
                 return \$this;
             }
 
+
+            function limit(\$limit)
+            {
+
+                \$this->___limit(\$limit);
+                return \$this;
+            }
+
+
+            function offset(\$offset)
+            {
+
+                \$this->___offset(\$offset);
+                return \$this;
+            }
+
         }
         PHP;
     }

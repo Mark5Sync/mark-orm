@@ -17,6 +17,7 @@ class SQLBuilder
 
     private $request = [];
     private $propsValues = [];
+    private $setOptions = [];
     private $selected = [];
 
 
@@ -53,6 +54,12 @@ class SQLBuilder
 
         if (is_array($props))
             $this->pushToPropsValues($props);
+    }
+
+
+    function set($option, $value)
+    {
+        $this->setOptions[$option] = $value;
     }
 
 
@@ -221,7 +228,22 @@ class SQLBuilder
         if ($where = $this->whereMix())
             $result = " WHERE " . implode(' AND ', $where);
 
+        if ($limit = $this->getOption('limit'))
+            $result .= " LIMIT $limit";
+
+        if ($offset = $this->getOption('offset'))
+            $result .= " OFFSET $offset";
+
         return $result;
+    }
+
+
+    function getOption(string $option)
+    {
+        if (!isset($this->setOptions[$option]))
+            return;
+
+        return $this->setOptions[$option];
     }
 
 
@@ -249,6 +271,7 @@ class SQLBuilder
         $this->request = [];
         $this->propsValues = [];
         $this->selected = [];
+        $this->setOptions = [];
         $this->whereBuilder->reset();
         $this->joinBuilder->reset();
     }

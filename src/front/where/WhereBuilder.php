@@ -5,11 +5,11 @@ namespace markorm\front\where;
 use markdi\Mark;
 use markorm\_markers\front;
 
-
 #[Mark(mode: Mark::LOCAL)]
 class WhereBuilder
 {
     use front;
+
 
     private $options = [];
     private $tableName = false;
@@ -32,6 +32,8 @@ class WhereBuilder
         foreach ($this->options as $option) {
             $result[] = $option->toSQL();
         }
+
+
         
         return $result;
     }

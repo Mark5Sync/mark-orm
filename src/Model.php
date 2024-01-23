@@ -192,6 +192,15 @@ abstract class Model
     }
 
 
+    protected function __limit($value){
+        $this->sqlBuilder->set('limit', $value);
+    }
+
+    protected function __offset($value){
+        $this->sqlBuilder->set('offset', $value);
+    }
+
+
     function query(?string &$sql)
     {
         $this->sql = &$sql;
