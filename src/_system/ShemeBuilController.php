@@ -17,12 +17,18 @@ class ShemeBuilController
 
     function __construct(private string $root, $psr4)
     {
+        ini_set('display_errors', 0);
 
         foreach ($psr4 as $namespace => $folder) {
+            $connections = $this->findSourseConnections($folder);
+            if (empty($connections))
+                die("$folder - ConnectionSource не найдено");
+
+
             [$projectFolder, $projectNamespace] = $this->createProjectFolder($folder, $namespace);
 
-            foreach ($this->mapConnections($folder) as $connectionClass) {
-                echo "\use connection $connectionClass\n";
+            foreach ($connections as $connectionSourceClass) {
+                $this->applyConnection($connectionSourceClass);
 
                 $tables = $this->findTables();
                 $relationship = $this->getRelationship();
@@ -68,24 +74,37 @@ class ShemeBuilController
     }
 
 
-    function mapConnections($folder)
+    function findSourseConnections($folder): array
     {
         $map = ClassMapGenerator::createMap("$this->root/$folder");
+        $result = [];
 
         foreach ($map as $class => $path) {
-            $reflection = new \ReflectionClass($class);
+            try {
+                $reflection = new \ReflectionClass($class);
+            } catch (\ReflectionException $th) {
+                echo "\n\n{$th->getMessage()}\n\n";
+            }
 
             if (!$reflection->isSubclassOf(ConnectionSource::class))
                 continue;
 
-            $this->pdoMark = new ReflectionMark($class);
-
-            $this->pdo = null;
-            $this->pdo = (new ($class))->pdo;
-            yield $class;
+            $result[] = $class;
         }
+
+        return $result;
     }
 
+
+    function applyConnection($connectionSourceClass)
+    {
+        $this->pdoMark = new ReflectionMark($connectionSourceClass);
+
+        $this->pdo = null;
+        $this->pdo = (new ($connectionSourceClass))->pdo;
+
+        echo "\use connection $connectionSourceClass\n";
+    }
 
 
     function findTables()
