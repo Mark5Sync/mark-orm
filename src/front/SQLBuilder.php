@@ -63,12 +63,13 @@ class SQLBuilder
     }
 
 
-    function pushWhere($option, $props)
+    function pushWhere($option, $props, $useProps = true)
     {
         $props = $this->filter($option, $props);
         $this->whereBuilder->push($option, $props);
 
-        $this->pushToPropsValues($props);
+        if ($useProps)
+            $this->pushToPropsValues($props);
     }
 
     private function filter($option, $values)

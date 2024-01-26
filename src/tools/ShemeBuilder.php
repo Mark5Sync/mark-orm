@@ -17,7 +17,8 @@ class ShemeBuilder
         private string $table,
         private array $tableProps,
 
-    ) {}
+    ) {
+    }
 
 
     function injectConnection(ReflectionMark $connection)
@@ -26,12 +27,14 @@ class ShemeBuilder
         return $this;
     }
 
-    function setRelationship(?array $relationship){
+    function setRelationship(?array $relationship)
+    {
         $this->relationship = $relationship;
         return $this;
     }
 
-    function getRelationship(): string {
+    function getRelationship(): string
+    {
         if (!$this->relationship)
             return 'null';
 
@@ -49,7 +52,7 @@ class ShemeBuilder
     {
 
         $rel = $this->getRelationship();
-        
+
         return <<<PHP
         <?php
 
@@ -72,13 +75,17 @@ class ShemeBuilder
             }
 
         {$this->createTunelMethod('sel', 'bool', ' SELECT title FROM ... ')}
+
+        
         
         {$this->createTunelMethod('selectAs', 'string', ' SELECT title as MyTitle FROM ... ')}
         {$this->createTunelMethod('like', 'string', ' ... WHERE title LIKE \'%1%\' ... ')}
         {$this->createTunelMethod('regexp', 'string', ' ... WHERE id REGEXP \'1\' ... ')}
         {$this->createTunelMethod('in', 'array', ' ... WHERE id IN (1, 2, 3) ')}
 
-    
+        {$this->createTunelMethod('isNull', 'bool', ' IS NULL ')}
+        {$this->createTunelMethod('isNotNull', 'bool', ' IS NOT NULL ')}
+
 
 
         {$this->createTunelMethod('where', 'auto', ' ... WHERE id = 1 ')}
@@ -208,6 +215,7 @@ class ShemeBuilder
             case 'int':
                 return 'int';
             case 'date':
+            case 'datetime':
                 return 'string';
 
             case 'float':

@@ -45,6 +45,14 @@ class WhereOption
             case 'or':
                 $result[] = 'or';
                 break;
+
+            case 'isNull':
+            case 'isNotNull':
+                $operator = $this->option == 'isNull' ? " IS NULL " : " IS NOT NULL ";
+                foreach ($this->props as $coll) {
+                    $result[] = "{$this->tableName}.$coll[coll] $operator";
+                }
+                break;
         }
 
         return implode(' AND ', $result);

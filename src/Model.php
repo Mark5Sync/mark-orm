@@ -143,17 +143,14 @@ abstract class Model
         $this->sql = $this->replace_props($sql, $props);
 
         $stmt = $this->getPDO()->prepare($sql);
-        try {
-            $stmt->execute($props);
-        } catch (\Throwable $th) {
-            exit("\nERROR:\n\n [\n$this->sql\n]\n\n" . $th->getMessage());
-        }
+        $stmt->execute($props);
 
         return $stmt;
     }
 
 
-    private function replace_props($query, $props){
+    private function replace_props($query, $props)
+    {
         foreach ($props as $prop => $value) {
             $query = str_replace(":$prop", var_export($value, true), $query);
         }
@@ -192,11 +189,13 @@ abstract class Model
     }
 
 
-    protected function ___limit($value){
+    protected function ___limit($value)
+    {
         $this->sqlBuilder->set('limit', $value);
     }
 
-    protected function ___offset($value){
+    protected function ___offset($value)
+    {
         $this->sqlBuilder->set('offset', $value);
     }
 
@@ -209,12 +208,43 @@ abstract class Model
 
 
 
-    function transaction(){
-        $this->getPDO()->beginTransaction();
+    function ___isNull($props){
+        $this->sqlBuilder->pushWhere('isNull', $props, false);
+        return $this;
+    }
 
-        return [
-            fn() => $this->getPDO()->commit(),
-            fn() => $this->getPDO()->rollBack(),
-        ];
+
+
+    function ___isNotNull($props){
+        $this->sqlBuilder->pushWhere('isNotNull', $props, false);
+        return $this;
+    }
+
+
+
+    function transaction()
+    {
+        return new class($this->getPDO()){
+            function __construct(private $pdo){}
+
+            function start(){
+                $this->pdo->beginTransaction();
+                return $this;
+            }
+
+            function rollBack(){
+                $this->pdo->rollBack();
+            }
+
+            function commit(){
+                $this->pdo->commit();
+            }
+        };
+    }
+
+
+    function truncateTable()
+    {
+        return $this->getPDO()->query("TRUNCATE `$this->table`");
     }
 }
