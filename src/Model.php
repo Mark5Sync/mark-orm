@@ -225,10 +225,11 @@ abstract class Model
     function transaction()
     {
         return new class($this->getPDO()){
-            function __construct(private $pdo){}
+            function __construct(private $pdo){
+                $this->pdo->beginTransaction();
+            }
 
             function start(){
-                $this->pdo->beginTransaction();
                 return $this;
             }
 
