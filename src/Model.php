@@ -95,7 +95,7 @@ abstract class Model
     }
 
 
-    public function ___join(Model $model, ?string $references = null, ?string $fields = null)
+    public function ___join(Model $model, ?string $references = null, ?string $fields = null, $type = 'left')
     {
         $table = $model->table;
         if (!$references || !$fields) {
@@ -113,8 +113,10 @@ abstract class Model
             $model,
             $references,
             $fields,
+            $type,
         );
     }
+
 
 
     public function apply(): bool
