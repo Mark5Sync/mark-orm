@@ -53,91 +53,22 @@ class ShemeBuilder
 
         $rel = $this->getRelationship();
 
-        return <<<PHP
-        <?php
+        $props = [
+            '___namespace___' => $namespace,
+            '___markerClass___' => $this->connection->markerClass,
+            '___class___' => $class,
+            '__connectionMarker__' => $this->connection->marker,
+            '__rel__' => $rel,
+            '__table__' => $this->table,
+            '__connectionProp__' => $this->connection->prop,
+        ];
 
-        namespace $namespace;
-        use markorm\Model;
-        use {$this->connection->markerClass};
-
-        
-        abstract class $class extends Model {
-            use {$this->connection->marker};
-
-            protected ?array \$relationship = {$rel};
-
-            public string \$table = '{$this->table}';
-            protected string \$connectionProp = '{$this->connection->prop}'; 
-
-            function select(...\$props){
-                \$this->___select(\$props);
-                return \$this;
-            }
-
-        {$this->createTunelMethod('sel', 'bool', ' SELECT title FROM ... ')}
-
-        
-        
-        {$this->createTunelMethod('selectAs', 'string', ' SELECT title as MyTitle FROM ... ')}
-        {$this->createTunelMethod('like', 'string', ' ... WHERE title LIKE \'%1%\' ... ')}
-        {$this->createTunelMethod('regexp', 'string', ' ... WHERE id REGEXP \'1\' ... ')}
-        {$this->createTunelMethod('in', 'array', ' ... WHERE id IN (1, 2, 3) ')}
-
-        {$this->createTunelMethod('isNull', 'bool', ' IS NULL ')}
-        {$this->createTunelMethod('isNotNull', 'bool', ' IS NOT NULL ')}
-
-
-
-        {$this->createTunelMethod('where', 'auto', ' ... WHERE id = 1 ')}
-        {$this->createTunelMethod('fwhere', 'string', ' ... WHERE id = \'1\' ')}
-
-
-        
-        {$this->createTunelMethod('update', 'auto', ' ... SET id = 1 ', returnThis: false)}
-        {$this->createTunelMethod('insert', 'auto', ' ... INSERT (id) VALUES(1) ', returnThis: false)}
-
-            function desc(string \$description)
-            {
-                \$this->___desc(\$description);
-                return \$this;
-            }
-
-            function ___get(\$name)
-            {
-
-                \$this->___applyOperator(\$name);
-            }
-
-            function join(Model \$model)
-            {
-                \$this->___join(\$model);
-                return \$this;
-            }
-
-            function joinOn(string \$fields, Model \$model, string \$references)
-            {
-                \$this->___join(\$model, \$references, \$fields);
-                return \$this;
-            }
-
-
-            function limit(\$limit)
-            {
-
-                \$this->___limit(\$limit);
-                return \$this;
-            }
-
-
-            function offset(\$offset)
-            {
-
-                \$this->___offset(\$offset);
-                return \$this;
-            }
-
+        $abstactCode = file_get_contents(__DIR__ . "/../AbstractModel.php");
+        foreach ($props as $key => $value) {
+            $abstactCode = str_replace($key, $value, $abstactCode);
         }
-        PHP;
+
+        return $abstactCode;
     }
 
 
