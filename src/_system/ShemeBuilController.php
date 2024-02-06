@@ -84,6 +84,8 @@ class ShemeBuilController
                 $reflection = new \ReflectionClass($class);
             } catch (\ReflectionException $th) {
                 echo "\n\n{$th->getMessage()}\n\n";
+            } catch (\Throwable $th) {
+                echo "\n\n -- {$th->getMessage()}\n\n";
             }
 
             if (!$reflection->isSubclassOf(ConnectionSource::class))
