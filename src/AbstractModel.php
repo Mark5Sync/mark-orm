@@ -2,18 +2,16 @@
 
 namespace ___namespace___;
 use markorm\Model;
-// use {$this->connection->markerClass};
 use ___markerClass___;
 
 
 abstract class ___class___ extends Model {
-    // use {$this->connection->marker};
     use __connectionMarker__;
 
     protected ?array $relationship = __rel__;
 
-    public string $table = __table__;
-    protected string $connectionProp = __connectionProp__; 
+    public string $table = '__table__';
+    protected string $connectionProp = '__connectionProp__'; 
 
     function select(...$props){
         $this->___select($props);
@@ -28,6 +26,7 @@ abstract class ___class___ extends Model {
      * SELECT title FROM ...
     */
     function sel(&$___bool___){
+        $props = $___restruct_bool___;
         $this->___sel($props);
         return $this;
     }
@@ -36,6 +35,7 @@ abstract class ___class___ extends Model {
      * SELECT title as MyTitle FROM ...
     */
     function selectAs(&$___string___){
+        $props = $___restruct_string___;
         $this->___sel($props);
         return $this;
     }
@@ -45,6 +45,7 @@ abstract class ___class___ extends Model {
      * ... WHERE title LIKE \'%1%\' ...
     */
     function like(&$___string___){
+        $props = $___restruct_string___;
         $this->___sel($props);
         return $this;
     }
@@ -53,6 +54,7 @@ abstract class ___class___ extends Model {
      * ... WHERE id REGEXP \'1\' ...
     */
     function regexp(&$___string___){
+        $props = $___restruct_string___;
         $this->___sel($props);
         return $this;
     }
@@ -61,6 +63,7 @@ abstract class ___class___ extends Model {
      * ... WHERE id IN (1, 2, 3)
     */
     function in(&$___array___){
+        $props = $___restruct_array___;
         $this->___in($props);
         return $this;
     }
@@ -72,6 +75,7 @@ abstract class ___class___ extends Model {
      * IS NULL
     */
     function isNull(&$___bool___){
+        $props = $___restruct_bool___;
         $this->___isNull($props);
         return $this;
     }
@@ -80,6 +84,7 @@ abstract class ___class___ extends Model {
      * IS NOT NULL
     */
     function isNotNull(&$___bool___){
+        $props = $___restruct_bool___;
         $this->___isNotNull($props);
         return $this;
     }
@@ -94,6 +99,7 @@ abstract class ___class___ extends Model {
      * WHERE id = 1
     */
     function where(&$___auto___){
+        $props = $___restruct_auto___;
         $this->___where($props);
         return $this;
     }
@@ -102,6 +108,7 @@ abstract class ___class___ extends Model {
      * ... WHERE id = \'1\'
     */
     function fwhere(&$___string___){
+        $props = $___restruct_string___;
         $this->___where($props);
         return $this;
     }
@@ -113,6 +120,7 @@ abstract class ___class___ extends Model {
      * ...SET id = 1
     */
     function update(&$___auto___){
+        $props = $___restruct_auto___;
         return $this->___update($props);
     }
 
@@ -120,6 +128,7 @@ abstract class ___class___ extends Model {
      * ... INSERT (id) VALUES(1)
     */
     function insert(&$___auto___){
+        $props = $___restruct_auto___;
         return $this->___insert($props);
     }
     
