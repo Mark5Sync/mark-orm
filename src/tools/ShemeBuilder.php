@@ -50,7 +50,7 @@ class ShemeBuilder
 
     function getCode($class, $namespace)
     {
-
+        $split = "\n\t\t\t";
         $rel = $this->getRelationship();
 
         $props = [
@@ -66,6 +66,15 @@ class ShemeBuilder
         $abstactCode = file_get_contents(__DIR__ . "/../AbstractModel.php");
         foreach ($props as $key => $value) {
             $abstactCode = str_replace($key, $value, $abstactCode);
+        }
+
+        $colls = array_column($this->tableProps, 'coll');
+        foreach (['auto', 'bool', 'array', 'string'] as $propsType) {
+            $input = $this->getMethodProps($propsType, $colls, ' = null', true);
+            $restruct = $split . implode(",$split", array_map(fn ($coll) => "'$coll' => \$$coll", $colls));
+
+            $abstactCode = str_replace("&\$___{$propsType}___", $input, $abstactCode);
+            $abstactCode = str_replace("\$___restruct_{$propsType}___", $restruct, $abstactCode);
         }
 
         return $abstactCode;
