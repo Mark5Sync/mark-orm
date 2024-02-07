@@ -7,6 +7,7 @@ use markorm\sections\exec;
 use markorm\sections\join;
 use markorm\sections\select;
 use markorm\sections\where;
+use markorm\tools\Page;
 
 abstract class Model
 {
@@ -24,6 +25,7 @@ abstract class Model
     public $debugQuery = false;
 
     protected ?array $relationship = null;
+    private $page = null;
 
 
 
@@ -80,6 +82,11 @@ abstract class Model
             throw new \Exception("Undefined OPERATOR [$operator]", 1);
 
         $this->sqlBuilder->pushWhere($operator, null);
+    }
+
+
+    protected function ___page(int $index, int $size, ?int &$pages = null){
+        $this->page = new Page($index, $size, $pages);
     }
 
 

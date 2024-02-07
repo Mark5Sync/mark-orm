@@ -13,12 +13,13 @@ class JoinBuilder
     private $tableName = false;
     private $joins = [];
 
-    function push(Model $model, string $references, string $fields, ?string $joinAs)
+    function push(Model $model, string $references, string $fields, string $type, ?string $joinAs)
     {
         $this->joins[$model->table] = [
             'fields' => $fields,
             'model' => $model,
             'references' => $references,
+            'type' => $type,
             'joinAs' => $joinAs,
         ];
     }
@@ -70,12 +71,12 @@ class JoinBuilder
         return $result;
     }
 
-    function getSelect()
+    function getSelect(?string $cascadeTitle = null)
     {
         $result = [];
 
-        foreach ($this->joins as ['model' => $model]) {
-            $result = [...$result, ...$model->sqlBuilder->getSelectBlock()];
+        foreach ($this->joins as ['model' => $model, 'joinAs' => $joinAs]) {
+            $result = [...$result, ...$model->sqlBuilder->getSelectBlock($cascadeTitle ? "$cascadeTitle/$joinAs" : $joinAs)];
         }
 
         return $result;

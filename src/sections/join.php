@@ -5,10 +5,19 @@ namespace markorm\sections;
 use markorm\_markers\front;
 use markorm\Model;
 
-trait join {
+trait join
+{
     use front;
+    private $useJoinCascade = false;
+
+
+    protected function ___useJoinCascade(bool $status = true)
+    {
+        $this->useJoinCascade = $status;
+    }
+
     
-    public function ___join(Model $model, ?string $references = null, ?string $fields = null, $type = 'left', ?string $joinAs = null)
+    protected function ___join(Model $model, ?string $references = null, ?string $fields = null, $type = 'left', ?string $joinAs = null)
     {
         $table = $model->table;
         if (!$references || !$fields) {
@@ -30,7 +39,4 @@ trait join {
             $joinAs,
         );
     }
-
-
-
 }

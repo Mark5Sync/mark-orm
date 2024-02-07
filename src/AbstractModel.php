@@ -36,7 +36,7 @@ abstract class ___class___ extends Model {
     */
     function selectAs(&$___string___){
         $props = [$___restruct_string___];
-        $this->___sel($props);
+        $this->___selectAs($props);
         return $this;
     }
 
@@ -163,10 +163,18 @@ abstract class ___class___ extends Model {
 
     function joinCascade(...$models)
     {
+        $this->___useJoinCascade(true);
+        
         foreach ($models as $propName => $model) {
             $this->___join($model, null, null, 'left', $propName);
         }
         
+        return $this;
+    }
+
+
+    function page(int $index, int $size){
+        $this->___page($index, $size);
         return $this;
     }
 

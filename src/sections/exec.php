@@ -2,9 +2,8 @@
 
 namespace markorm\sections;
 
-trait exec {
-
-    
+trait exec
+{
 
     public function apply(): bool
     {
@@ -14,14 +13,47 @@ trait exec {
     public function fetch()
     {
         $stmt = $this->exec();
-        return $stmt->fetch(\PDO::FETCH_ASSOC);
+        $result = $stmt->fetch(\PDO::FETCH_ASSOC);
+
+        if (!$this->useJoinCascade)
+            return $result;
+
+        return $this->cascadeSplit($result);
     }
 
     public function fetchAll()
     {
         $stmt = $this->exec();
-        return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+        $result = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+
+        if (!$this->useJoinCascade)
+            return $result;
+
+        return array_map(fn ($row) => $this->cascadeSplit($row), $result);
     }
+
+
+
+    private function cascadeSplit(array $data)
+    {
+        $result = [];
+        foreach ($data as $key => $value) {
+            $breadcrubs = explode('/', $key);
+
+            $to = &$result;
+            foreach ($breadcrubs as $breadcrub) {
+                if (!isset($to[$breadcrub]))
+                    $to[$breadcrub] = [];
+
+                $to = &$to[$breadcrub];
+            }
+
+            $to = $value;
+        }
+
+        return $result;
+    }
+
 
 
     private function exec()
@@ -36,5 +68,4 @@ trait exec {
 
         return $stmt;
     }
-
 }

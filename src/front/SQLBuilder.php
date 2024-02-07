@@ -21,12 +21,13 @@ class SQLBuilder
     private $selected = [];
 
 
-    function join(Model $model, string $references, string $fields, ?string $joinAs)
+    function join(Model $model, string $references, string $fields, string $type, ?string $joinAs)
     {
         $this->joinBuilder->push(
             $model,
             $references,
             $fields,
+            $type,
             $joinAs,
         );
     }
@@ -206,19 +207,23 @@ class SQLBuilder
     }
 
 
-    function getSelectBlock(): array
+    function getSelectBlock(?string $joinAs = null): array
     {
         $select = [];
 
         foreach ($this->selected as $key => $colls) {
             foreach ($colls as $as => $coll) {
-                $select[] = $key == 'selectAs'
-                    ? "{$this->table}.$as as $coll"
+                $as = $key == 'selectAs' ? $as : $coll;
+                $joinCollName = $joinAs ? "$joinAs/$coll" : $coll;
+
+
+                $select[] = $key == 'selectAs' || $joinAs
+                    ? "{$this->table}.$as as `$joinCollName`"
                     : "{$this->table}.$coll";
             }
         }
 
-        $select = [...$select, ...$this->joinBuilder->getSelect()];
+        $select = [...$select, ...$this->joinBuilder->getSelect($joinAs)];
 
         return $select;
     }
