@@ -2,12 +2,13 @@
 
 namespace markorm\sections;
 
+use markorm\_markers\front;
 use markorm\Model;
 
 trait join {
-
+    use front;
     
-    public function ___join(Model $model, ?string $references = null, ?string $fields = null, $type = 'left')
+    public function ___join(Model $model, ?string $references = null, ?string $fields = null, $type = 'left', ?string $joinAs = null)
     {
         $table = $model->table;
         if (!$references || !$fields) {
@@ -26,6 +27,7 @@ trait join {
             $references,
             $fields,
             $type,
+            $joinAs,
         );
     }
 

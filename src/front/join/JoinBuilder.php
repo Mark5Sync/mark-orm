@@ -13,12 +13,13 @@ class JoinBuilder
     private $tableName = false;
     private $joins = [];
 
-    function push(Model $model, string $references, string $fields)
+    function push(Model $model, string $references, string $fields, ?string $joinAs)
     {
         $this->joins[$model->table] = [
             'fields' => $fields,
             'model' => $model,
             'references' => $references,
+            'joinAs' => $joinAs,
         ];
     }
 

@@ -161,6 +161,16 @@ abstract class ___class___ extends Model {
     }
 
 
+    function joinCascade(...$models)
+    {
+        foreach ($models as $propName => $model) {
+            $this->___join($model, null, null, 'left', $propName);
+        }
+        
+        return $this;
+    }
+
+
     function limit($limit)
     {
 

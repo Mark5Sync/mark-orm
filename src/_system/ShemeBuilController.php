@@ -80,6 +80,9 @@ class ShemeBuilController
         $result = [];
 
         foreach ($map as $class => $path) {
+            if (str_ends_with($class, 'Model'))
+                continue;
+
             try {
                 $reflection = new \ReflectionClass($class);
             } catch (\ReflectionException $th) {

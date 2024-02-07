@@ -21,12 +21,13 @@ class SQLBuilder
     private $selected = [];
 
 
-    function join(Model $model, string $references, string $fields)
+    function join(Model $model, string $references, string $fields, ?string $joinAs)
     {
         $this->joinBuilder->push(
             $model,
             $references,
             $fields,
+            $joinAs,
         );
     }
 
@@ -81,7 +82,7 @@ class SQLBuilder
         $result = [];
 
         foreach ($values as $coll => $value) {
-            if (is_null($value))
+            if ($value === false)
                 continue;
 
             $dataColl = "{$option}_{$coll}";
