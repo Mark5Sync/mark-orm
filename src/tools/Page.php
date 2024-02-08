@@ -29,7 +29,7 @@ class Page
         $stmt = $this->builder->getPDO()->prepare($sql);
         $stmt->execute($props);
 
-        $this->pages = $stmt->fetch(\PDO::FETCH_ASSOC)['count'];
+        $this->pages = ceil($stmt->fetch(\PDO::FETCH_ASSOC)['count'] / $this->size);
     }
 
 
