@@ -15,10 +15,13 @@ trait exec
         $stmt = $this->exec();
         $result = $stmt->fetch(\PDO::FETCH_ASSOC);
 
-        if (!$this->useJoinCascade)
-            return $result;
+        if (!empty($this->joinArray))
+            $result = $this->cascadeArrayMerge([$result])[0];
 
-        return $this->cascadeSplit($result);
+        if ($this->useJoinCascade)
+            $result = $this->cascadeSplit($result);
+
+        return $result;
     }
 
     public function fetchAll()
@@ -26,16 +29,34 @@ trait exec
         $stmt = $this->exec();
         $result = $stmt->fetchAll(\PDO::FETCH_ASSOC);
 
-        if (!$this->useJoinCascade)
-            return $result;
+        $splitConcade = $this->useJoinCascade;
 
-        return array_map(fn ($row) => $this->cascadeSplit($row), $result);
+        if (!empty($this->joinArray))
+            $result = $this->cascadeArrayMerge($result);
+
+        if ($splitConcade)
+            $result = array_map(fn ($row) => $this->cascadeSplit($row), $result);
+
+        return $result;
     }
 
+
+    private function cascadeArrayMerge(array $data){
+        $joinArray = $this->joinArray;
+        $this->joinArray = [];
+        $this->useJoinCascade = false;
+
+        foreach ($joinArray as $joinAs => $joinCascadeArray) {
+            $joinCascadeArray->merge($data, $this);
+        }
+
+        return $data;
+    }
 
 
     private function cascadeSplit(array $data)
     {
+
         $result = [];
         foreach ($data as $key => $value) {
             $breadcrubs = explode('/', $key);

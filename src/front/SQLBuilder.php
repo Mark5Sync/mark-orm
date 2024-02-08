@@ -24,11 +24,24 @@ class SQLBuilder
 
     public ?Model $parentModel = null;
     public ?Page  $page = null;
+    public array $joinArray = [];
 
 
     function join(Model $model, string $references, string $fields, string $type, ?string $joinAs)
     {
         $this->joinBuilder->push(
+            $model,
+            $references,
+            $fields,
+            $type,
+            $joinAs,
+        );
+    }
+
+
+    function joinCascadeArray(Model $model, string $references, string $fields, string $type, ?string $joinAs)
+    {
+        $this->joinCascadeArrayBuilder->push(
             $model,
             $references,
             $fields,
@@ -45,6 +58,7 @@ class SQLBuilder
     {
         $this->table = $table;
         $this->whereBuilder->setTableName($table);
+        $this->joinBuilder->setTableName($table);
         $this->joinBuilder->setTableName($table);
     }
 

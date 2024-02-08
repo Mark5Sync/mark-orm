@@ -157,16 +157,19 @@ abstract class ___class___ extends Model
         return $this;
     }
 
+
     function ___get($name)
     {
         $this->___applyOperator($name);
     }
+
 
     function join(Model $model)
     {
         $this->___join($model);
         return $this;
     }
+
 
     function joinOn(string $fields, Model $model, string $references)
     {
@@ -181,6 +184,18 @@ abstract class ___class___ extends Model
 
         foreach ($models as $propName => $model) {
             $this->___join($model, null, null, 'left', $propName);
+        }
+
+        return $this;
+    }
+
+
+    function joinCascadeArray(...$models)
+    {
+        $this->___useJoinCascade(true);
+
+        foreach ($models as $propName => $model) {
+            $this->___joinCascadeArray($model, null, null, 'left', $propName);
         }
 
         return $this;

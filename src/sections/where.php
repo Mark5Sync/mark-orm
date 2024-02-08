@@ -23,6 +23,7 @@ trait where {
     protected function ___in($props)
     {
         $this->sqlBuilder->pushWhere('in', $props);
+        return $this;
     }
 
     protected function ___fwhere($props)

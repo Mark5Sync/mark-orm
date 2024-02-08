@@ -2,8 +2,10 @@
 
 namespace markorm\tools;
 
+use markdi\NotMark;
 use markorm\front\SQLBuilder;
 
+#[NotMark]
 class Page
 {
 

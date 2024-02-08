@@ -29,8 +29,6 @@ abstract class Model
 
 
 
-
-
     function __construct()
     {
         $this->sqlBuilder->setTable($this->table);
@@ -65,6 +63,7 @@ abstract class Model
         return !!$this->exec();
     }
 
+
     protected function ___insert($props): int
     {
         $this->sqlBuilder->push('insert', $props);
@@ -72,6 +71,7 @@ abstract class Model
 
         return $this->getPDO()->lastInsertId();
     }
+
 
     function delete(): bool
     {
@@ -100,6 +100,7 @@ abstract class Model
     {
         $this->sqlBuilder->set('limit', $value);
     }
+
 
     protected function ___offset($value)
     {
@@ -162,5 +163,17 @@ abstract class Model
     function truncateTable()
     {
         return $this->getPDO()->query("TRUNCATE `$this->table`");
+    }
+
+
+    function ___mergeJoinIn($references, $referencesData, Model $model)
+    {
+        $this->join($model, null, null, 'right')
+            ->where(...[$references => $referencesData[0]])
+            ->query($sql);
+
+        $result = $this->fetchAll();
+
+        return $result;
     }
 }
