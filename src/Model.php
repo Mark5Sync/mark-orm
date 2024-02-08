@@ -166,13 +166,27 @@ abstract class Model
     }
 
 
-    function ___mergeJoinIn($references, $referencesData, Model $model)
+    function ___mergeJoinIn($mainColl, $mainData, Model $model, string $modelColl)
     {
-        $this->join($model, null, null, 'right')
-            ->where(...[$references => $referencesData[0]])
+        $this->join($model->selectAs(...[$modelColl => "__cascadeJoinArrayBy__$mainColl"]))
+            ->in(...[$mainColl => $mainData])
             ->query($sql);
 
-        $result = $this->fetchAll();
+
+        $result = $this->joinByCollumn($this->fetchAll(), "__cascadeJoinArrayBy__$mainColl");
+
+        return $result;
+    }
+
+    private function joinByCollumn(array $rows, string $mergeCollName)
+    {
+        $result = [];
+
+        foreach ($rows as $row) {
+            $key = $row[$mergeCollName];
+            unset($row[$mergeCollName]);
+            $result[$key][] = $row;
+        }
 
         return $result;
     }

@@ -66,7 +66,6 @@ trait join
             $type,
             $joinAs,
         );
-        $joinCascadeArray->parent($this);
 
         $this->selectAs(...[$fields => "__cascadeJoinArrayBy__$references"]);
 

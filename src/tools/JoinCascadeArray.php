@@ -19,19 +19,19 @@ class JoinCascadeArray
     }
 
 
-    function parent(Model $parent)
-    {
-        // $this->parent = $parent;
-    }
-
-
     function merge(&$result, Model $model)
     {   
-        $key = "__cascadeJoinArrayBy__{$this->references}";
-        $referencesData = array_column($result, $key);
-        unset($result[$key]);
+        $mergeCollName = "__cascadeJoinArrayBy__{$this->references}";
+        $referencesData = array_column($result, $mergeCollName);
 
-        $result2 = $model->___mergeJoinIn($this->fields, $referencesData, $this->model);
+        $data = $model->___mergeJoinIn($this->fields, $referencesData, $this->model, $this->references);
         
+
+        foreach ($result as &$row) {
+            $mergeValue = $row[$mergeCollName];
+            unset($row[$mergeCollName]);
+
+            $row[$this->joinAs] = $data[$mergeValue];
+        }
     }
 }
