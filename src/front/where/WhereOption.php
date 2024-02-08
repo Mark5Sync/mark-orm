@@ -17,6 +17,20 @@ class WhereOption
     }
 
 
+    private function arrayColl($coll)
+    {
+        if (!is_array($coll['value']))
+            return ':' . $coll['dataColl'];
+
+        $result = [];
+        foreach ($coll['value'] as $key => $_) {
+            $result[] = ":{$coll['dataColl']}_$key";
+        }
+
+        return implode(',', $result);
+    }
+
+
     function toSQL(): string
     {
         $result = [];
@@ -34,7 +48,8 @@ class WhereOption
                 break;
             case 'in':
                 foreach ($this->props as $coll) {
-                    $result[] = "{$this->tableName}.$coll[coll] IN (:$coll[dataColl])";
+                    $arrayColl = $this->arrayColl($coll);
+                    $result[] = "{$this->tableName}.$coll[coll] IN ($arrayColl)";
                 }
                 break;
             case 'regexp':
@@ -57,5 +72,4 @@ class WhereOption
 
         return implode(' AND ', $result);
     }
-
 }

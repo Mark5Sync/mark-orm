@@ -304,9 +304,21 @@ class SQLBuilder
 
     function getProps(): array | null
     {
-        $props = [...$this->propsValues, ...$this->joinBuilder->getProps()];
+        $props = [];
 
-        return $props;
+        foreach ($this->propsValues as $coll => $value) {
+            if (is_array($value)){
+                foreach ($value as $collIndex => $valueByIndex) {
+                    $props["{$coll}_{$collIndex}"] = $valueByIndex;
+                }
+            } else {
+                $props[$coll] = $value;
+            }
+        }
+
+        $result = [...$props, ...$this->joinBuilder->getProps()];
+
+        return $result;
     }
 
 
