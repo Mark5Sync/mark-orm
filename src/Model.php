@@ -29,10 +29,14 @@ abstract class Model
 
 
 
+
+
     function __construct()
     {
         $this->sqlBuilder->setTable($this->table);
+        $this->sqlBuilder->parentModel = $this;
     }
+
 
     function getPDO()
     {
@@ -40,8 +44,8 @@ abstract class Model
     }
 
 
-    protected function ___desc(){
-        
+    protected function ___desc()
+    {
     }
 
 
@@ -85,8 +89,10 @@ abstract class Model
     }
 
 
-    protected function ___page(int $index, int $size, ?int &$pages = null){
-        $this->page = new Page($index, $size, $pages);
+    protected function ___page(int $index, int $size, int | false | null &$pages = false)
+    {
+        $page = new Page($index, $size, $pages);
+        $page->limitFor($this->sqlBuilder);
     }
 
 
@@ -150,6 +156,7 @@ abstract class Model
             }
         };
     }
+
 
 
     function truncateTable()

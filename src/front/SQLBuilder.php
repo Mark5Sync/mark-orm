@@ -5,6 +5,8 @@ namespace markorm\front;
 use markdi\Mark;
 use markorm\_markers\front;
 use markorm\Model;
+use markorm\tools\Page;
+use PDO;
 
 #[Mark('sqlBuilder', mode: Mark::LOCAL)]
 class SQLBuilder
@@ -20,6 +22,9 @@ class SQLBuilder
     private $setOptions = [];
     private $selected = [];
 
+    public ?Model $parentModel = null;
+    public ?Page  $page = null;
+
 
     function join(Model $model, string $references, string $fields, string $type, ?string $joinAs)
     {
@@ -30,6 +35,10 @@ class SQLBuilder
             $type,
             $joinAs,
         );
+    }
+
+    function getPDO(){
+        return $this->parentModel->getPDO();
     }
 
     function setTable(string $table)
@@ -193,17 +202,26 @@ class SQLBuilder
 
 
 
-    private function getSelect()
+    private function getSelect(bool $selectCount = false)
     {
-        $select     = $this->getSelectBlock();
+        $select = $selectCount
+            ? ['COUNT(*) as count']
+            : $this->getSelectBlock();
+
         $blockJoin  = $this->joinBuilder->toSQL();
-        $blockWhere = $this->getBlockWhere();
+        $blockWhere = $this->getBlockWhere($selectCount);
 
         $select = !empty($select) ? implode(', ', $select) : '*';
 
         $sql = "SELECT $select FROM $this->table $blockJoin $blockWhere";
 
         return $sql;
+    }
+
+
+    function getSelectCount()
+    {
+        return $this->getSelect(true);
     }
 
 
@@ -229,17 +247,22 @@ class SQLBuilder
     }
 
 
-    private function getBlockWhere()
+    private function getBlockWhere($notUseLimits = false)
     {
         $result = '';
         if ($where = $this->whereMix())
             $result = " WHERE " . implode(' AND ', $where);
 
-        if ($limit = $this->getOption('limit'))
-            $result .= " LIMIT $limit";
+        if (!$notUseLimits)
+            if ($this->page) {
+                $result .= $this->page;
+            } else {
+                if ($limit = $this->getOption('limit'))
+                    $result .= " LIMIT $limit";
 
-        if ($offset = $this->getOption('offset'))
-            $result .= " OFFSET $offset";
+                if ($offset = $this->getOption('offset'))
+                    $result .= " OFFSET $offset";
+            }
 
         return $result;
     }
@@ -281,6 +304,7 @@ class SQLBuilder
         $this->setOptions = [];
         $this->whereBuilder->reset();
         $this->joinBuilder->reset();
+        $this->page = null;
     }
 
 

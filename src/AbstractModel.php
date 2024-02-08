@@ -1,19 +1,22 @@
 <?php
 
 namespace ___namespace___;
+
 use markorm\Model;
 use ___markerClass___;
 
 
-abstract class ___class___ extends Model {
+abstract class ___class___ extends Model
+{
     use __connectionMarker__;
 
     protected ?array $relationship = __rel__;
 
     public string $table = '__table__';
-    protected string $connectionProp = '__connectionProp__'; 
+    protected string $connectionProp = '__connectionProp__';
 
-    function select(...$props){
+    function select(...$props)
+    {
         $this->___select($props);
         return $this;
     }
@@ -24,8 +27,9 @@ abstract class ___class___ extends Model {
 
     /** 
      * SELECT title FROM ...
-    */
-    function sel(&$___bool___){
+     */
+    function sel(&$___bool___)
+    {
         $props = [$___restruct_bool___];
         $this->___sel($props);
         return $this;
@@ -33,8 +37,9 @@ abstract class ___class___ extends Model {
 
     /** 
      * SELECT title as MyTitle FROM ...
-    */
-    function selectAs(&$___string___){
+     */
+    function selectAs(&$___string___)
+    {
         $props = [$___restruct_string___];
         $this->___selectAs($props);
         return $this;
@@ -43,8 +48,9 @@ abstract class ___class___ extends Model {
 
     /** 
      * ... WHERE title LIKE \'%1%\' ...
-    */
-    function like(&$___string___){
+     */
+    function like(&$___string___)
+    {
         $props = [$___restruct_string___];
         $this->___sel($props);
         return $this;
@@ -52,8 +58,9 @@ abstract class ___class___ extends Model {
 
     /** 
      * ... WHERE id REGEXP \'1\' ...
-    */
-    function regexp(&$___string___){
+     */
+    function regexp(&$___string___)
+    {
         $props = [$___restruct_string___];
         $this->___sel($props);
         return $this;
@@ -61,8 +68,9 @@ abstract class ___class___ extends Model {
 
     /** 
      * ... WHERE id IN (1, 2, 3)
-    */
-    function in(&$___array___){
+     */
+    function in(&$___array___)
+    {
         $props = [$___restruct_array___];
         $this->___in($props);
         return $this;
@@ -73,8 +81,9 @@ abstract class ___class___ extends Model {
 
     /** 
      * IS NULL
-    */
-    function isNull(&$___bool___){
+     */
+    function isNull(&$___bool___)
+    {
         $props = [$___restruct_bool___];
         $this->___isNull($props);
         return $this;
@@ -82,8 +91,9 @@ abstract class ___class___ extends Model {
 
     /** 
      * IS NOT NULL
-    */
-    function isNotNull(&$___bool___){
+     */
+    function isNotNull(&$___bool___)
+    {
         $props = [$___restruct_bool___];
         $this->___isNotNull($props);
         return $this;
@@ -97,8 +107,9 @@ abstract class ___class___ extends Model {
 
     /** 
      * WHERE id = 1
-    */
-    function where(&$___auto___){
+     */
+    function where(&$___auto___)
+    {
         $props = [$___restruct_auto___];
         $this->___where($props);
         return $this;
@@ -106,8 +117,9 @@ abstract class ___class___ extends Model {
 
     /** 
      * ... WHERE id = \'1\'
-    */
-    function fwhere(&$___string___){
+     */
+    function fwhere(&$___string___)
+    {
         $props = [$___restruct_string___];
         $this->___where($props);
         return $this;
@@ -118,20 +130,22 @@ abstract class ___class___ extends Model {
 
     /** 
      * ...SET id = 1
-    */
-    function update(&$___auto___){
+     */
+    function update(&$___auto___)
+    {
         $props = [$___restruct_auto___];
         return $this->___update($props);
     }
 
-   /** 
+    /** 
      * ... INSERT (id) VALUES(1)
-    */
-    function insert(&$___auto___){
+     */
+    function insert(&$___auto___)
+    {
         $props = [$___restruct_auto___];
         return $this->___insert($props);
     }
-    
+
 
 
 
@@ -164,17 +178,18 @@ abstract class ___class___ extends Model {
     function joinCascade(...$models)
     {
         $this->___useJoinCascade(true);
-        
+
         foreach ($models as $propName => $model) {
             $this->___join($model, null, null, 'left', $propName);
         }
-        
+
         return $this;
     }
 
 
-    function page(int $index, int $size){
-        $this->___page($index, $size);
+    function page(int $index, int $size, int | false | null &$pages = false)
+    {
+        $this->___page($index, $size, $pages);
         return $this;
     }
 
