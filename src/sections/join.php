@@ -1,22 +1,19 @@
 <?php
 
+
 namespace markorm\sections;
 
 use markorm\_markers\front;
 use markorm\Model;
 use markorm\tools\JoinCascadeArray;
 
+
 trait join
 {
     use front;
-    private $useJoinCascade = false;
-    private $joinArray = [];
 
-
-    protected function ___useJoinCascade(bool $status = true)
-    {
-        $this->useJoinCascade = $status;
-    }
+    private $joinsModel = [];
+    private $joinsCascade = [];
 
 
     private function checkRelationship(Model $model)
@@ -36,11 +33,18 @@ trait join
     }
 
 
+    function getJoinModels()
+    {
+        return $this->joinsModel;
+    }
+
+
     protected function ___join(Model $model, ?string $references = null, ?string $fields = null, $type = 'left', ?string $joinAs = null)
     {
         if (!$references || !$fields)
             [$fields, $references] = $this->checkRelationship($model);
 
+        $this->mergeModels($model);
 
         $this->sqlBuilder->join(
             $model,
@@ -59,6 +63,8 @@ trait join
         if (!$references || !$fields)
             [$fields, $references] = $this->checkRelationship($model);
 
+        $this->mergeModels($model);
+
         $joinCascadeArray = new JoinCascadeArray(
             $model,
             $references,
@@ -69,6 +75,33 @@ trait join
 
         $this->selectAs(...[$fields => "__cascadeJoinArrayBy__$references"]);
 
-        $this->joinArray[$joinAs] = $joinCascadeArray;
+        $this->joinsCascade[$joinAs] = $joinCascadeArray;
+    }
+
+
+    private function mergeModels(Model $model)
+    {
+        $this->joinsModel = [...$this->joinsModel, $model, $model->getJoinModels()];
+    }
+
+
+
+    private function applyCascadeMerge(array $data)
+    {
+        foreach ([$this, ...$this->joinsModel] as $model) {
+            if (empty($model->joinsCascade))
+                continue;
+
+            $joinsModel = $model->joinsCascade;
+            $model->joinsCascade = [];
+
+            foreach ($joinsModel as $joinAs => $joinCascadeArray) {
+                $joinCascadeArray->merge($data, $model);
+            }
+
+            return $data;
+        }
+        
+        return;
     }
 }

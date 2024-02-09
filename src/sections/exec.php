@@ -5,53 +5,38 @@ namespace markorm\sections;
 trait exec
 {
 
+
     public function apply(): bool
     {
         return !!$this->exec();
     }
+
 
     public function fetch()
     {
         $stmt = $this->exec();
         $result = $stmt->fetch(\PDO::FETCH_ASSOC);
 
-        if (!empty($this->joinArray))
-            $result = $this->cascadeArrayMerge([$result])[0];
-
-        if ($this->useJoinCascade)
-            $result = $this->cascadeSplit($result);
+        if ($cascadeResult = $this->applyCascadeMerge([$result]))
+            $result = $cascadeResult[0];
 
         return $result;
     }
+
 
     public function fetchAll()
     {
         $stmt = $this->exec();
         $result = $stmt->fetchAll(\PDO::FETCH_ASSOC);
 
-        $splitConcade = $this->useJoinCascade;
 
-        if (!empty($this->joinArray))
-            $result = $this->cascadeArrayMerge($result);
-
-        if ($splitConcade)
-            $result = array_map(fn ($row) => $this->cascadeSplit($row), $result);
+        if ($cascadeResult = $this->applyCascadeMerge($result))
+            $result = $cascadeResult;
 
         return $result;
     }
 
 
-    private function cascadeArrayMerge(array $data){
-        $joinArray = $this->joinArray;
-        $this->joinArray = [];
-        $this->useJoinCascade = false;
-
-        foreach ($joinArray as $joinAs => $joinCascadeArray) {
-            $joinCascadeArray->merge($data, $this);
-        }
-
-        return $data;
-    }
 
 
     private function cascadeSplit(array $data)
@@ -74,7 +59,6 @@ trait exec
 
         return $result;
     }
-
 
 
     private function exec()

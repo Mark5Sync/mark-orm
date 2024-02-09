@@ -19,6 +19,7 @@ abstract class Model
     use exec;
 
 
+    private string $mark;
     public string $table;
     protected string $connectionProp;
     private ?string $sql;
@@ -168,9 +169,10 @@ abstract class Model
 
     function ___mergeJoinIn($mainColl, $mainData, Model $model, string $modelColl)
     {
-        $this->join($model->selectAs(...[$modelColl => "__cascadeJoinArrayBy__$mainColl"]))
-            ->in(...[$mainColl => $mainData])
-            ->query($sql);
+        $this->join(
+                $model->selectAs(...[$modelColl => "__cascadeJoinArrayBy__$mainColl"])
+            )
+            ->in(...[$mainColl => $mainData]);
 
 
         $result = $this->joinByCollumn($this->fetchAll(), "__cascadeJoinArrayBy__$mainColl");
@@ -189,5 +191,10 @@ abstract class Model
         }
 
         return $result;
+    }
+
+    function ___mark(string $mark){
+        $this->mark = $mark;
+        return $this;
     }
 }

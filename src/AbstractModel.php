@@ -180,7 +180,6 @@ abstract class ___class___ extends Model
 
     function joinCascade(...$models)
     {
-        $this->___useJoinCascade(true);
 
         foreach ($models as $propName => $model) {
             $this->___join($model, null, null, 'left', $propName);
@@ -192,7 +191,6 @@ abstract class ___class___ extends Model
 
     function joinCascadeArray(...$models)
     {
-        $this->___useJoinCascade(true);
 
         foreach ($models as $propName => $model) {
             $this->___joinCascadeArray($model, null, null, 'left', $propName);
@@ -221,6 +219,13 @@ abstract class ___class___ extends Model
     {
 
         $this->___offset($offset);
+        return $this;
+    }
+
+
+    function mark(string $mark)
+    {
+        $this->___mark($mark);
         return $this;
     }
 }
