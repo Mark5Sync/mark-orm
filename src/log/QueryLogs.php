@@ -1,6 +1,6 @@
 <?php
 
-namespace markorm\tools;
+namespace markorm\log;
 
 
 class QueryLogs {

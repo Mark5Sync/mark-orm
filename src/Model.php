@@ -3,6 +3,7 @@
 namespace markorm;
 
 use markorm\_markers\front;
+use markorm\_markers\log;
 use markorm\sections\exec;
 use markorm\sections\join;
 use markorm\sections\select;
@@ -17,6 +18,9 @@ abstract class Model
     use where;
     use join;
     use exec;
+
+    use log;
+
 
 
     private string $mark;
@@ -111,7 +115,7 @@ abstract class Model
 
     function query(?string &$sql)
     {
-        $this->sql = &$sql;
+        $sql = &$this->queryLogs->queryes;
         return $this;
     }
 

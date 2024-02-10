@@ -24,6 +24,9 @@ class JoinCascadeArray
         $mergeCollName = "__cascadeJoinArrayBy__{$this->references}";
         $referencesData = array_column($result, $mergeCollName);
 
+        if (empty($referencesData))
+            throw new \Exception("JoinCascadeArray - столбец $mergeCollName пуст", 1);
+            
         $data = $model->___mergeJoinIn($this->fields, $referencesData, $this->model, $this->references);
         
 

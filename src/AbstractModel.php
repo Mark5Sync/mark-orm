@@ -46,6 +46,14 @@ abstract class ___class___ extends Model
     }
 
 
+    function selectDate(&$___string_date___)
+    {
+        $props = [$___restruct_string_date___];
+        $this->___selectDate($props);
+        return $this;
+    }
+
+
     /** 
      * ... WHERE title LIKE \'%1%\' ...
      */

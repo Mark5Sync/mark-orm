@@ -2,7 +2,11 @@
 
 namespace markorm\sections;
 
+use markorm\_markers\front;
+use markorm\_markers\tools;
+
 trait select {
+    use front;
 
     public function ___select(array $props)
     {
@@ -31,6 +35,21 @@ trait select {
             $colls[$coll] = $collAs;
         }
         $this->sqlBuilder->select($colls, true);
+    }
+
+
+
+    protected function ___selectDate($props){
+        $colls = [];
+        $dateFormats = [];
+        foreach ($props as $coll => $dateFormat) {
+            if (!$dateFormat)
+                continue;
+
+            $dateFormats[$coll] = $dateFormat;
+            $colls[] = $coll;
+        }
+        $this->sqlBuilder->select($colls);
     }
 
 }

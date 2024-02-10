@@ -2,9 +2,11 @@
 
 namespace markorm\sections;
 
+use markorm\_markers\log;
+
 trait exec
 {
-
+    use log;
 
     public function apply(): bool
     {
@@ -19,6 +21,9 @@ trait exec
 
         if ($cascadeResult = $this->applyCascadeMerge([$result]))
             $result = $cascadeResult[0];
+
+        if ($result)
+            $result = $this->cascadeSplit($result);
 
         return $result;
     }
@@ -66,7 +71,7 @@ trait exec
         $props = $this->sqlBuilder->getProps();
         $sql = $this->sqlBuilder->getSQL();
 
-        $this->sql = $this->replace_props($sql, $props);
+        $this->queryLogs->log($this->replace_props($sql, $props));
 
         $stmt = $this->getPDO()->prepare($sql);
         $stmt->execute($props);
