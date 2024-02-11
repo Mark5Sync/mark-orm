@@ -78,10 +78,13 @@ abstract class Model
     }
 
 
-    function delete(): bool
+    function delete(): int
     {
         $this->sqlBuilder->push('delete', true);
-        return !!$this->exec();
+        $smtp = $this->exec();
+
+        $count = $smtp->rowCount();
+        return $count;
     }
 
 
