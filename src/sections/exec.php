@@ -38,6 +38,9 @@ trait exec
         if ($cascadeResult = $this->applyCascadeMerge($result))
             $result = $cascadeResult;
 
+        if ($result)
+            $result = array_map(fn($row) => $this->cascadeSplit($row), $result);
+
         return $result;
     }
 
