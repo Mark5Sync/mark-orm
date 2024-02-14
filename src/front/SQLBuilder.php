@@ -50,7 +50,8 @@ class SQLBuilder
         );
     }
 
-    function getPDO(){
+    function getPDO()
+    {
         return $this->parentModel->getPDO();
     }
 
@@ -141,14 +142,16 @@ class SQLBuilder
         $result = null;
         $mode = isset($this->request['insert'])
             ? 'insert'
-            : (isset($this->request['update'])
-                ? 'update'
-                : (isset($this->request['delete'])
-                    ? 'delete'
-                    : (isset($this->request['select'])
-                        ? 'select'
-                        : 'select'
-                    )));
+            : (isset($this->request['insertOnDublicateUpdate'])
+                ? 'insertOnDublicateUpdate'
+                : (isset($this->request['update'])
+                    ? 'update'
+                    : (isset($this->request['delete'])
+                        ? 'delete'
+                        : (isset($this->request['select'])
+                            ? 'select'
+                            : 'select'
+                        ))));
 
         switch ($mode) {
             case 'insert':
@@ -162,6 +165,9 @@ class SQLBuilder
                 break;
             case 'select':
                 $result = $this->getSelect();
+                break;
+            case 'insertOnDublicateUpdate':
+                $result = $this->getInsertOnDublicateUpdate();
                 break;
             default:
                 throw new \Exception("Что я делаю...", 1);
@@ -180,6 +186,25 @@ class SQLBuilder
         $collValues = ':' . implode(', :', array_column($props, 'dataColl'));
 
         $sql = "INSERT INTO {$this->table}({$collProps}) VALUES({$collValues})";
+
+        return $sql;
+    }
+
+
+    private function getInsertOnDublicateUpdate()
+    {
+        $props = $this->request['insertOnDublicateUpdate'];
+        $collProps = implode(', ', array_column($props, 'coll'));
+        $collValues = ':' . implode(', :', array_column($props, 'dataColl'));
+
+
+        $updateProps = implode(', ', array_map(
+            fn ($coll) => "$coll[coll] = :$coll[dataColl]",
+            $this->request['insertOnDublicateUpdate']
+        ));
+
+
+        $sql = "INSERT INTO {$this->table}({$collProps}) VALUES({$collValues}) ON DUPLICATE KEY UPDATE $updateProps";
 
         return $sql;
     }
@@ -307,7 +332,7 @@ class SQLBuilder
         $props = [];
 
         foreach ($this->propsValues as $coll => $value) {
-            if (is_array($value)){
+            if (is_array($value)) {
                 foreach ($value as $collIndex => $valueByIndex) {
                     $props["{$coll}_{$collIndex}"] = $valueByIndex;
                 }

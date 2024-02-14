@@ -155,7 +155,14 @@ abstract class ___class___ extends Model
     }
 
 
-
+    /** 
+     * ... INSERT (id) VALUES(1) ON DUBLICATE UPDATE
+     */
+    function insertOnDublicateUpdate(&$___auto___)
+    {
+        $props = [$___restruct_auto___];
+        return $this->___insertOnDublicateUpdate($props);
+    }
 
 
 

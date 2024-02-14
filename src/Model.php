@@ -78,6 +78,15 @@ abstract class Model
     }
 
 
+    protected function ___insertOnDublicateUpdate($props): int
+    {
+        $this->sqlBuilder->push('insertOnDublicateUpdate', $props);
+        $this->exec();
+
+        return $this->getPDO()->lastInsertId();
+    }
+
+
     function delete(): int
     {
         $this->sqlBuilder->push('delete', true);
