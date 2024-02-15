@@ -127,7 +127,7 @@ abstract class Model
 
     function query(?string &$sql)
     {
-        $sql = &$this->queryLogs->queryes;
+        $this->sql = &$sql;
         return $this;
     }
 

@@ -74,7 +74,9 @@ trait exec
         $props = $this->sqlBuilder->getProps();
         $sql = $this->sqlBuilder->getSQL();
 
-        $this->queryLogs->log($this->replace_props($sql, $props));
+        $this->sql = $this->replace_props($sql, $props);
+
+        $this->queryLogs->log($this->sql);
 
         $stmt = $this->getPDO()->prepare($sql);
         $stmt->execute($props);
