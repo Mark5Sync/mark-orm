@@ -76,7 +76,14 @@ class JoinBuilder
         $result = [];
 
         foreach ($this->joins as ['model' => $model, 'joinAs' => $joinAs]) {
-            $result = [...$result, ...$model->sqlBuilder->getSelectBlock($cascadeTitle ? "$cascadeTitle/$joinAs" : $joinAs)];
+            $joinKey = $cascadeTitle && $joinAs 
+                            ? "$cascadeTitle/$joinAs"
+                            : (
+                                $cascadeTitle 
+                                    ? $cascadeTitle
+                                    : $joinAs
+                            );
+            $result = [...$result, ...$model->sqlBuilder->getSelectBlock($joinKey)];
         }
 
         return $result;
