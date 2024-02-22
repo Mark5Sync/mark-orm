@@ -38,7 +38,8 @@ class WhereOption
         switch ($this->option) {
             case 'where':
                 foreach ($this->props as $coll) {
-                    $result[] = "{$this->tableName}.$coll[coll] = :$coll[dataColl]";
+                    $option = is_null($coll['value']) ? 'IS' : '=';
+                    $result[] = "{$this->tableName}.$coll[coll] $option :$coll[dataColl]";
                 }
                 break;
             case 'like':
