@@ -149,6 +149,21 @@ abstract class Model
 
 
 
+    function ___orderBy($type, $props)
+    {
+        $colls = [];
+        foreach ($props as $coll => $pass) {
+            if (!$pass)
+                continue;
+
+            $colls[] = $coll;
+        }
+        $this->sqlBuilder->setOrderBy($type, $colls);
+        return $this;
+    }
+
+
+
     function transaction()
     {
         return new class($this->getPDO())
@@ -186,8 +201,8 @@ abstract class Model
     function ___mergeJoinIn($mainColl, $mainData, Model $model, string $modelColl)
     {
         $this->join(
-                $model->selectAs(...[$modelColl => "__cascadeJoinArrayBy__$mainColl"])
-            )
+            $model->selectAs(...[$modelColl => "__cascadeJoinArrayBy__$mainColl"])
+        )
             ->in(...[$mainColl => $mainData]);
 
 
@@ -209,7 +224,8 @@ abstract class Model
         return $result;
     }
 
-    function ___mark(string $mark){
+    function ___mark(string $mark)
+    {
         $this->mark = $mark;
         return $this;
     }

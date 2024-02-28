@@ -26,6 +26,17 @@ class SQLBuilder
     public ?Page  $page = null;
     public array $joinArray = [];
 
+    private $orderByType = 'ASC';
+    private $orderByColls = [];
+
+
+    function setOrderBy($orderByType, $orderByColls)
+    {
+        $this->orderByType = $orderByType;
+        $this->orderByColls = $orderByColls;
+    }
+
+
 
     function join(Model $model, string $references, string $fields, string $type, ?string $joinAs)
     {
@@ -292,6 +303,12 @@ class SQLBuilder
         if ($where = $this->whereMix())
             $result = " WHERE " . implode(' AND ', $where);
 
+
+        if (!$notUseLimits && !empty($this->orderByColls))
+            $result .= " ORDER BY " . implode(', ', $this->orderByColls) . " $this->orderByType";
+
+
+
         if (!$notUseLimits)
             if ($this->page) {
                 $result .= $this->page;
@@ -302,6 +319,7 @@ class SQLBuilder
                 if ($offset = $this->getOption('offset'))
                     $result .= " OFFSET $offset";
             }
+
 
         return $result;
     }

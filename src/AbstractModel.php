@@ -238,6 +238,20 @@ abstract class ___class___ extends Model
     }
 
 
+    function orderByAsc(&$___bool___){
+        $props = [$___restruct_bool___];
+        $this->___orderBy('ASC', $props);
+        return $this;
+    }
+
+
+    function orderByDesc(&$___bool___){
+        $props = [$___restruct_bool___];
+        $this->___orderBy('DESC', $props);
+        return $this;
+    }
+
+
     function mark(string $mark)
     {
         $this->___mark($mark);
