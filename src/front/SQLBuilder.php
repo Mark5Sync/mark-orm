@@ -374,6 +374,8 @@ class SQLBuilder
         $this->whereBuilder->reset();
         $this->joinBuilder->reset();
         $this->page = null;
+        $this->orderByType = 'ASC';
+        $this->orderByColls = [];
     }
 
 
