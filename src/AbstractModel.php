@@ -60,7 +60,7 @@ abstract class ___class___ extends Model
     function like(&$___string___)
     {
         $props = [$___restruct_string___];
-        $this->___sel($props);
+        $this->___like($props);
         return $this;
     }
 
@@ -70,7 +70,7 @@ abstract class ___class___ extends Model
     function regexp(&$___string___)
     {
         $props = [$___restruct_string___];
-        $this->___sel($props);
+        $this->___regexp($props);
         return $this;
     }
 
