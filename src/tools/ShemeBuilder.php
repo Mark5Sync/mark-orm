@@ -154,7 +154,9 @@ class ShemeBuilder
     {
         switch ($sqlType) {
             case 'int':
+            case 'bigint':
                 return 'int';
+
             case 'date':
             case 'datetime':
                 return 'string';
