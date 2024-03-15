@@ -54,6 +54,10 @@ trait join
             $joinAs,
         );
 
+
+        if ($joinAs)
+            $this->selectAs(...[$fields => "__cascadeJoinField__$joinAs"]);
+
         return $this;
     }
 
@@ -101,7 +105,7 @@ trait join
 
             return $data;
         }
-        
+
         return;
     }
 }

@@ -39,7 +39,7 @@ trait exec
             $result = $cascadeResult;
 
         if ($result)
-            $result = array_map(fn($row) => $this->cascadeSplit($row), $result);
+            $result = array_map(fn ($row) => $this->cascadeSplit($row), $result);
 
         return $result;
     }
@@ -50,8 +50,18 @@ trait exec
     private function cascadeSplit(array $data)
     {
 
+        $nullableEssences = [];
+
+
         $result = [];
+
         foreach ($data as $key => $value) {
+            if (str_starts_with($key, '__cascadeJoinField__')) {
+                if (is_null($value))
+                    $nullableEssences[] = substr($key, 20);
+                continue;
+            }
+
             $breadcrubs = explode('/', $key);
 
             $to = &$result;
@@ -63,6 +73,12 @@ trait exec
             }
 
             $to = $value;
+        }
+
+        if (!empty($nullableEssences)) {
+            foreach($nullableEssences as $nullableKey){
+                $result[$nullableKey] = null;
+            }
         }
 
         return $result;
