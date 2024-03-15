@@ -77,7 +77,7 @@ trait exec
 
         if (!empty($nullableEssences)) {
             foreach($nullableEssences as $nullableKey){
-                $result[$nullableKey] = null;
+                unset($result[$nullableKey]);// = null;
             }
         }
 
