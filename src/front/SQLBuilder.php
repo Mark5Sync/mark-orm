@@ -304,8 +304,10 @@ class SQLBuilder
             $result = " WHERE " . implode(' AND ', $where);
 
 
-        if (!$notUseLimits && !empty($this->orderByColls))
-            $result .= " ORDER BY " . implode(', ', $this->orderByColls) . " $this->orderByType";
+        if (!$notUseLimits && !empty($this->orderByColls)) {
+            $orderColls = array_map(fn ($orderCollItem) => "{$this->parentModel->table}.{$orderCollItem}", $this->orderByColls);
+            $result .= " ORDER BY " . implode(', ', $orderColls) . " $this->orderByType";
+        }
 
 
 
