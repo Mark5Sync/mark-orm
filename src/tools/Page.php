@@ -2,7 +2,7 @@
 
 namespace markorm\tools;
 
-use markdi\NotMark;
+use marksync\provider\NotMark;
 use markorm\front\SQLBuilder;
 
 #[NotMark]

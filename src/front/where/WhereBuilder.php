@@ -2,7 +2,7 @@
 
 namespace markorm\front\where;
 
-use markdi\Mark;
+use marksync\provider\Mark;
 use markorm\_markers\front;
 
 #[Mark(mode: Mark::LOCAL)]

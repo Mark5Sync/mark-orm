@@ -1,6 +1,6 @@
 <?php
 namespace markorm\_markers;
-use markdi\markdi;
+use marksync\provider\provider;
 use markorm\log\QueryLogs;
 
 /**
@@ -8,7 +8,7 @@ use markorm\log\QueryLogs;
 
 */
 trait log {
-    use markdi;
+    use provider;
 
    function queryLogs(): QueryLogs { return new QueryLogs; }
 

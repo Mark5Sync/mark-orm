@@ -2,7 +2,7 @@
 
 namespace markorm\front\where;
 
-use markdi\MarkInstance;
+use marksync\provider\MarkInstance;
 
 
 #[MarkInstance('whereOption')]

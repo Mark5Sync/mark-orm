@@ -2,7 +2,7 @@
 
 namespace markorm\front;
 
-use markdi\Mark;
+use marksync\provider\Mark;
 use markorm\_markers\front;
 use markorm\Model;
 use markorm\tools\Page;

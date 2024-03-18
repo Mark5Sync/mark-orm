@@ -2,7 +2,7 @@
 
 namespace markorm\tools;
 
-use markdi\Mark;
+use marksync\provider\Mark;
 
 #[Mark(mode: Mark::LOCAL)]
 class Format {

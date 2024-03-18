@@ -1,6 +1,6 @@
 <?php
 namespace markorm\_markers;
-use markdi\markdi;
+use marksync\provider\provider;
 use markorm\front\where\WhereBuilder;
 use markorm\front\where\WhereOption;
 use markorm\front\SQLBuilder;
@@ -13,7 +13,7 @@ use markorm\front\join\JoinBuilder;
 
 */
 trait front {
-    use markdi;
+    use provider;
 
    function _whereBuilder(): WhereBuilder { return new WhereBuilder; }
    function whereOption(string $option,  $props, string|false $tableName = false): WhereOption { return new WhereOption($option, $props, $tableName); }

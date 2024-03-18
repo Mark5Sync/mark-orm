@@ -4,7 +4,7 @@ namespace markorm\_system;
 
 
 use Composer\ClassMapGenerator\ClassMapGenerator;
-use markdi\ReflectionMark;
+use marksync\provider\ReflectionMark;
 use markorm\_markers\tools;
 
 class ShemeBuilController

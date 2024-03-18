@@ -2,7 +2,7 @@
 
 namespace markorm\front\join;
 
-use markdi\Mark;
+use marksync\provider\Mark;
 use markorm\Model;
 
 

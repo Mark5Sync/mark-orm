@@ -1,6 +1,6 @@
 <?php
 namespace markorm\_markers;
-use markdi\markdi;
+use marksync\provider\provider;
 use markorm\tools\Page;
 use markorm\tools\JoinCascadeArray;
 use markorm\tools\Format;
@@ -15,7 +15,7 @@ use markorm\tools\ConnectionRecipient;
 
 */
 trait tools {
-    use markdi;
+    use provider;
 
    function page(): Page { return new Page; }
    function joinCascadeArray(): JoinCascadeArray { return new JoinCascadeArray; }

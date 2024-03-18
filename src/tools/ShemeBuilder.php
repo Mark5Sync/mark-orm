@@ -3,8 +3,8 @@
 
 namespace markorm\tools;
 
-use markdi\MarkInstance;
-use markdi\ReflectionMark;
+use marksync\provider\MarkInstance;
+use marksync\provider\ReflectionMark;
 
 #[MarkInstance]
 class ShemeBuilder
