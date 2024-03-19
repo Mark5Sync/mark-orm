@@ -252,6 +252,13 @@ abstract class ___class___ extends Model
     }
 
 
+    function groupBy(&$___bool___){
+        $props = [$___restruct_bool___];
+        $this->___groupBy($props);
+        return $this;
+    }
+
+
     function mark(string $mark)
     {
         $this->___mark($mark);

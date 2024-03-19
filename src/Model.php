@@ -163,6 +163,20 @@ abstract class Model
     }
 
 
+    function ___groupBy($props)
+    {
+        $colls = [];
+        foreach ($props as $coll => $pass) {
+            if (!$pass)
+                continue;
+
+            $colls[] = $coll;
+        }
+        $this->sqlBuilder->setGroupBy($colls);
+        return $this;
+    }
+
+
 
     function transaction()
     {

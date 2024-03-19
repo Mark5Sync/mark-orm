@@ -29,11 +29,20 @@ class SQLBuilder
     private $orderByType = 'ASC';
     private $orderByColls = [];
 
+    private $groupByProps = [];
+
+
 
     function setOrderBy($orderByType, $orderByColls)
     {
         $this->orderByType = $orderByType;
         $this->orderByColls = $orderByColls;
+    }
+
+
+    function setGroupBy(array $groupByProps)
+    {
+        $this->groupByProps = $groupByProps;
     }
 
 
@@ -297,6 +306,17 @@ class SQLBuilder
     }
 
 
+
+    /**
+     * @var string[] $colls 
+     */
+    private function appendTableNameToColls(array $colls)
+    {
+        return array_map(fn ($orderCollItem) => "{$this->parentModel->table}.{$orderCollItem}", $colls);
+    }
+
+
+
     private function getBlockWhere($notUseLimits = false)
     {
         $result = '';
@@ -304,10 +324,18 @@ class SQLBuilder
             $result = " WHERE " . implode(' AND ', $where);
 
 
+        if (!empty($this->groupByProps)) {
+            $orderColls = $this->appendTableNameToColls($this->groupByProps);
+            $result .= " GROUP BY " . implode(', ', $orderColls);
+        }
+
+
         if (!$notUseLimits && !empty($this->orderByColls)) {
-            $orderColls = array_map(fn ($orderCollItem) => "{$this->parentModel->table}.{$orderCollItem}", $this->orderByColls);
+            $orderColls = $this->appendTableNameToColls($this->orderByColls);
             $result .= " ORDER BY " . implode(', ', $orderColls) . " $this->orderByType";
         }
+
+
 
 
 
@@ -378,6 +406,7 @@ class SQLBuilder
         $this->page = null;
         $this->orderByType = 'ASC';
         $this->orderByColls = [];
+        $this->groupByProps = [];
     }
 
 
