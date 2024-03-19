@@ -2,8 +2,10 @@
 
 namespace markorm\sections;
 
-trait where {
+use markorm\_markers\front;
 
+trait where {
+    use front;
     
     protected function ___where($props)
     {
@@ -20,9 +22,9 @@ trait where {
         $this->sqlBuilder->pushWhere('regexp', $props);
     }
 
-    protected function ___in($props)
+    protected function ___in($props, bool $isNot = false)
     {
-        $this->sqlBuilder->pushWhere('in', $props);
+        $this->sqlBuilder->pushWhere($isNot ? 'notIn' : 'in', $props);
         return $this;
     }
 

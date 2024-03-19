@@ -85,6 +85,16 @@ abstract class ___class___ extends Model
     }
 
 
+    /** 
+     * ... WHERE id IN (1, 2, 3)
+     */
+    function notIn(&$___array___)
+    {
+        $props = [$___restruct_array___];
+        $this->___in($props, true);
+        return $this;
+    }
+
 
 
     /** 

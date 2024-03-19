@@ -31,7 +31,7 @@ class WhereOption
     }
 
 
-    function toSQL(): string
+    function toSQL(): ?string
     {
         $result = [];
 
@@ -48,9 +48,17 @@ class WhereOption
                 }
                 break;
             case 'in':
+            case 'notIn':
+                $isNot = $this->option == 'notIn';
+                $notOption = $isNot ? 'NOT' : '';
+            
                 foreach ($this->props as $coll) {
                     $arrayColl = $this->arrayColl($coll);
-                    $result[] = "{$this->tableName}.$coll[coll] IN ($arrayColl)";
+
+                    if ($isNot && empty($arrayColl))
+                        continue;
+
+                    $result[] = "{$this->tableName}.$coll[coll] {$notOption} IN ($arrayColl)";
                 }
                 break;
             case 'regexp':
@@ -70,6 +78,9 @@ class WhereOption
                 }
                 break;
         }
+
+        if (empty($result))
+            return null;
 
         return implode(' AND ', $result);
     }

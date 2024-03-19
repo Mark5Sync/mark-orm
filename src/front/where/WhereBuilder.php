@@ -30,7 +30,8 @@ class WhereBuilder
     {
         $result = [];
         foreach ($this->options as $option) {
-            $result[] = $option->toSQL();
+            if ($strOptions = $option->toSQL())
+                $result[] = $strOptions;
         }
 
 
