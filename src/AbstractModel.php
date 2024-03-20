@@ -4,11 +4,21 @@ namespace ___namespace___;
 
 use markorm\Model;
 use ___markerClass___;
+use ___ArtisanNameSpace___;
 
 
 abstract class ___class___ extends Model
 {
     use __connectionMarker__;
+
+
+    final function __construct()
+    {
+        $this->sqlBuilder->setTable($this->table);
+        $this->sqlBuilder->parentModel = $this;
+        $this->sqlBuilder->whereBuilder->schemeViewer = new ___ArtisanClass___;
+    }
+
 
     protected ?array $relationship = __rel__;
 
@@ -248,21 +258,24 @@ abstract class ___class___ extends Model
     }
 
 
-    function orderByAsc(&$___bool___){
+    function orderByAsc(&$___bool___)
+    {
         $props = [$___restruct_bool___];
         $this->___orderBy('ASC', $props);
         return $this;
     }
 
 
-    function orderByDesc(&$___bool___){
+    function orderByDesc(&$___bool___)
+    {
         $props = [$___restruct_bool___];
         $this->___orderBy('DESC', $props);
         return $this;
     }
 
 
-    function groupBy(&$___bool___){
+    function groupBy(&$___bool___)
+    {
         $props = [$___restruct_bool___];
         $this->___groupBy($props);
         return $this;
@@ -272,6 +285,26 @@ abstract class ___class___ extends Model
     function mark(string $mark)
     {
         $this->___mark($mark);
+        return $this;
+    }
+
+
+
+
+    /**
+     * callable $callback
+     * @var ___ArtisanClass___ $table
+     */
+    function scheme(callable $callback)
+    {
+        /** 
+         * @var ___ArtisanClass___ $schemeViewer
+        */
+        $schemeViewer = $this->sqlBuilder->whereBuilder->getSchemeViewer();
+        $query = $callback($schemeViewer);
+
+        $this->___scheme($query);
+
         return $this;
     }
 }

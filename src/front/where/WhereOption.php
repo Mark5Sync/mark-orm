@@ -8,12 +8,14 @@ use marksync\provider\MarkInstance;
 #[MarkInstance('whereOption')]
 class WhereOption
 {
+    public string $expression;
 
     function __construct(
         private string $option,
         private $props,
         private string | false $tableName = false
     ) {
+        $this->expression = $this->toSQL();
     }
 
 
@@ -65,9 +67,6 @@ class WhereOption
                 foreach ($this->props as $coll) {
                     $result[] = "{$this->tableName}.$coll[coll] REGEXP :$coll[dataColl]";
                 }
-                break;
-            case 'or':
-                $result[] = 'or';
                 break;
 
             case 'isNull':

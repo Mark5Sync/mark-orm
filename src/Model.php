@@ -32,13 +32,7 @@ abstract class Model
     protected ?array $relationship = null;
     private $page = null;
 
-
-
-    function __construct()
-    {
-        $this->sqlBuilder->setTable($this->table);
-        $this->sqlBuilder->parentModel = $this;
-    }
+    protected $shemeView;
 
 
     function getPDO()
@@ -242,5 +236,14 @@ abstract class Model
     {
         $this->mark = $mark;
         return $this;
+    }
+
+
+
+
+
+    function ___scheme(string $sheme)
+    {
+        $this->sqlBuilder->setSheme($sheme);
     }
 }

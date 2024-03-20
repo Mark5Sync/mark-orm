@@ -6,7 +6,6 @@ use marksync\provider\Mark;
 use markorm\_markers\front;
 use markorm\Model;
 use markorm\tools\Page;
-use PDO;
 
 #[Mark('sqlBuilder', mode: Mark::LOCAL)]
 class SQLBuilder
@@ -30,6 +29,7 @@ class SQLBuilder
     private $orderByColls = [];
 
     private $groupByProps = [];
+
 
 
 
@@ -130,7 +130,7 @@ class SQLBuilder
             if ($value === false)
                 continue;
 
-            $dataColl = "{$option}_{$coll}";
+            $dataColl = $option . ucfirst($coll);
 
             if ($value == 'NULL') {
                 $value = null;
@@ -366,9 +366,9 @@ class SQLBuilder
 
     function whereMix()
     {
-        $result = $this->whereBuilder->getWhere();
+        $result = $this->whereBuilder->schemeViewer->getSheme();
 
-        $result = [...$result, ...$this->joinBuilder->getWhere()];
+        $result = [$result, ...$this->joinBuilder->getWhere()];
 
         return $result;
     }

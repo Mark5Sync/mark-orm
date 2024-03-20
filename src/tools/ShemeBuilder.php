@@ -1,6 +1,5 @@
 <?php
 
-
 namespace markorm\tools;
 
 use marksync\provider\MarkInstance;
@@ -11,15 +10,30 @@ class ShemeBuilder
 {
     private ?ReflectionMark $connection;
     private ?array $relationship;
+    private string $class;
+    private string $classArtisan;
 
 
     function __construct(
         private string $table,
         private array $tableProps,
-
     ) {
+
+        $className = $this->getClassName();
+        $this->class = "Abstract{$className}Model";
+        $this->classArtisan = "{$className}MSV";
     }
 
+    private function getClassName()
+    {
+        $words = explode('_', $this->table);
+        $class = '';
+        foreach ($words as $word) {
+            $class .= ucfirst($word);
+        }
+
+        return "{$class}";
+    }
 
     function injectConnection(ReflectionMark $connection)
     {
@@ -43,32 +57,80 @@ class ShemeBuilder
 
     function createAbstractModel($folder, $namespace)
     {
-        $class = $this->getClassName();
-        file_put_contents("$folder/$class.php", $this->getCode($class, $namespace));
+        $this->checkFolder("$folder/schemes");
+
+        $artisanNameSpace = "$namespace\\schemes";
+
+        file_put_contents("$folder/schemes/{$this->classArtisan}.php", $this->getSchemeCode($artisanNameSpace));
+        file_put_contents("$folder/{$this->class}.php", $this->getCode($namespace, $artisanNameSpace));
+    }
+
+    function checkFolder($folder)
+    {
+        if (!file_exists($folder))
+            mkdir($folder, 0777, true);
+    }
+
+    private function getSchemeCode($namespace)
+    {
+        $colls = array_column($this->tableProps, 'coll');
+        $viewerProps = [];
+
+        foreach ([null, ...$colls] as $coll) {
+            if ($coll)
+                $viewerProps[] = "\t\t/** -- $coll -- */";
+
+
+            foreach (['where', 'in', 'notIn', 'like', 'regexp', 'isNull', 'isNotNull'] as $option) {
+
+                $viewerProps[] = "\t\tpublic \$" . ($coll ? $option . ucfirst($coll) : $option) . ";";
+            }
+
+            $viewerProps[] = "\n\n";
+        }
+
+        $props = [
+            '__table__' => $this->table,
+            '___namespace___' => $namespace,
+            '___classArtisan___' => $this->classArtisan,
+            '___ArtisanContent___' => implode("\n", $viewerProps),
+        ];
+
+        $abstactCode = file_get_contents(__DIR__ . "/../ArtisanTable.php");
+        foreach ($props as $key => $value) {
+            $abstactCode = str_replace($key, $value, $abstactCode);
+        }
+
+        return $abstactCode;
     }
 
 
-    function getCode($class, $namespace)
+    function getCode($namespace, $artisanNameSpace)
     {
         $split = "\n\t\t\t";
         $rel = $this->getRelationship();
+        $colls = array_column($this->tableProps, 'coll');
+
 
         $props = [
             '___namespace___' => $namespace,
             '___markerClass___' => $this->connection->markerClass,
-            '___class___' => $class,
+            '___class___' => $this->class,
             '__connectionMarker__' => $this->connection->marker,
             '__rel__' => $rel,
             '__table__' => $this->table,
             '__connectionProp__' => $this->connection->prop,
+            '___ArtisanNameSpace___' => "$artisanNameSpace\\{$this->classArtisan}",
+            '___ArtisanClass___' => $this->classArtisan,
         ];
+
 
         $abstactCode = file_get_contents(__DIR__ . "/../AbstractModel.php");
         foreach ($props as $key => $value) {
             $abstactCode = str_replace($key, $value, $abstactCode);
         }
 
-        $colls = array_column($this->tableProps, 'coll');
+
         foreach (['auto', 'bool', 'array', 'string'] as $propsType) {
             $input = $this->getMethodProps($propsType, $colls, ' = false', $propsType == 'bool' ? '' : 'false | ');
             $restruct = $split . implode(",$split", array_map(fn ($coll) => "'$coll' => \$$coll", $colls));
@@ -81,49 +143,6 @@ class ShemeBuilder
     }
 
 
-    private function getClassName()
-    {
-        $words = explode('_', $this->table);
-        $class = '';
-        foreach ($words as $word) {
-            $class .= ucfirst($word);
-        }
-
-        return "Abstract{$class}Model";
-    }
-
-
-
-
-    private function createTunelMethod($methodName, $propType, $doc, $default = ' = null', $addNullType = true, $returnThis = true)
-    {
-        $colls = array_column($this->tableProps, 'coll');
-
-        $nullType = $addNullType ? '?' : '';
-        $props = $this->getMethodProps($propType, $colls, $default, $nullType);
-
-
-        $split = "\n\t\t\t";
-        $select = $split . implode(",$split", array_map(fn ($coll) => "'$coll' => \$$coll", $colls));
-
-
-        $body = "\$this->___{$methodName}([$select
-        ]);";
-        $body = $returnThis ? "$body$split return \$this;" : "return $body";
-
-        return <<<PHP
-        
-            /**
-             * $methodName
-             * $doc
-            */
-            function $methodName($props
-            ){
-                {$body}
-            }
-
-        PHP;
-    }
 
 
     private function getMethodProps($propType, $colls, $default, $nullType)
@@ -133,7 +152,7 @@ class ShemeBuilder
             $props = [];
             foreach ($this->tableProps as $coll) {
                 $phpType = $this->convertToPHPType($coll['type']) . " \${$coll['coll']}{$default}";
-                $props[] = ($coll['isNull'] == 'YES' ? 'null | ' : ''). $phpType;
+                $props[] = ($coll['isNull'] == 'YES' ? 'null | ' : '') . $phpType;
             }
 
             $split = "\n\t\t\t false | ";
