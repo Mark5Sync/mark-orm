@@ -182,9 +182,16 @@ abstract class Model
     {
         return new class($this->getPDO())
         {
+            private $rollbackOnDestruct = true;
             function __construct(private $pdo)
             {
                 $this->pdo->beginTransaction();
+            }
+
+            function __destruct()
+            {
+                if ($this->rollbackOnDestruct)
+                    $this->rollBack();
             }
 
             function start()
@@ -194,11 +201,13 @@ abstract class Model
 
             function rollBack()
             {
+                $this->rollbackOnDestruct = false;
                 $this->pdo->rollBack();
             }
 
             function commit()
             {
+                $this->rollbackOnDestruct = false;
                 $this->pdo->commit();
             }
         };
