@@ -9,6 +9,7 @@ use markorm\sections\join;
 use markorm\sections\select;
 use markorm\sections\where;
 use markorm\tools\Page;
+use markorm\transaction\Transaction;
 
 abstract class Model
 {
@@ -180,28 +181,7 @@ abstract class Model
 
     function transaction()
     {
-        return new class($this->getPDO())
-        {
-            function __construct(private $pdo)
-            {
-                $this->pdo->beginTransaction();
-            }
-
-            function start()
-            {
-                return $this;
-            }
-
-            function rollBack()
-            {
-                $this->pdo->rollBack();
-            }
-
-            function commit()
-            {
-                $this->pdo->commit();
-            }
-        };
+        return new Transaction($this->getPDO());
     }
 
 
