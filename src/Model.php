@@ -28,6 +28,9 @@ abstract class Model
     public string $table;
     protected string $connectionProp;
     private ?string $sql;
+
+    private ?array $insertData;
+
     public $debugQuery = false;
 
     protected ?array $relationship = null;
@@ -70,9 +73,18 @@ abstract class Model
     }
 
 
+    /**
+     * bind
+     */
+    public function insertData(null &$data) {
+        $this->insertData = &$data;
+        return $this;
+    }
+
     protected function ___insert($props): int
     {
-        $this->sqlBuilder->push('insert', $props);
+        $clearData = $this->sqlBuilder->push('insert', $props);
+        $this->insertData = $clearData;
         $this->exec();
 
         return $this->getPDO()->lastInsertId();
