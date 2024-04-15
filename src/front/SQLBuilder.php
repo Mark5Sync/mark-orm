@@ -100,6 +100,8 @@ class SQLBuilder
 
         if (is_array($props))
             $this->pushToPropsValues($props);
+
+        return $props;
     }
 
 

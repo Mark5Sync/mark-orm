@@ -9,6 +9,7 @@ use markorm\sections\join;
 use markorm\sections\select;
 use markorm\sections\where;
 use markorm\tools\Page;
+use markorm\transaction\Transaction;
 
 abstract class Model
 {
@@ -27,6 +28,9 @@ abstract class Model
     public string $table;
     protected string $connectionProp;
     private ?string $sql;
+
+    private ?array $insertData;
+
     public $debugQuery = false;
 
     protected ?array $relationship = null;
@@ -69,9 +73,18 @@ abstract class Model
     }
 
 
+    /**
+     * bind
+     */
+    public function insertData(null &$data) {
+        $this->insertData = &$data;
+        return $this;
+    }
+
     protected function ___insert($props): int
     {
-        $this->sqlBuilder->push('insert', $props);
+        $clearData = $this->sqlBuilder->push('insert', $props);
+        $this->insertData = $clearData;
         $this->exec();
 
         return $this->getPDO()->lastInsertId();
@@ -180,37 +193,7 @@ abstract class Model
 
     function transaction()
     {
-        return new class($this->getPDO())
-        {
-            private $rollbackOnDestruct = true;
-            function __construct(private $pdo)
-            {
-                $this->pdo->beginTransaction();
-            }
-
-            function __destruct()
-            {
-                if ($this->rollbackOnDestruct)
-                    $this->rollBack();
-            }
-
-            function start()
-            {
-                return $this;
-            }
-
-            function rollBack()
-            {
-                $this->rollbackOnDestruct = false;
-                $this->pdo->rollBack();
-            }
-
-            function commit()
-            {
-                $this->rollbackOnDestruct = false;
-                $this->pdo->commit();
-            }
-        };
+        return new Transaction($this->getPDO());
     }
 
 
