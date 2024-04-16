@@ -9,7 +9,7 @@ use markorm\sections\join;
 use markorm\sections\select;
 use markorm\sections\where;
 use markorm\tools\Page;
-use markorm\transaction\Transaction;
+use markorm\transact\Transaction;
 
 abstract class Model
 {
@@ -76,7 +76,8 @@ abstract class Model
     /**
      * bind
      */
-    public function insertData(null &$data) {
+    public function insertData(null &$data)
+    {
         $this->insertData = &$data;
         return $this;
     }
@@ -234,5 +235,12 @@ abstract class Model
     {
         $this->mark = $mark;
         return $this;
+    }
+
+
+
+    function ___whereScheme(string $scheme)
+    {
+        $this->sqlBuilder->whereBuilder->setScheme($scheme);
     }
 }

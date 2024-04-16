@@ -274,4 +274,13 @@ abstract class ___class___ extends Model
         $this->___mark($mark);
         return $this;
     }
+
+
+
+
+
+    function whereScheme(string $scheme){
+        $this->___whereScheme($scheme);
+        return $this;
+    }
 }
