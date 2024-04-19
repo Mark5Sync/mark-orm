@@ -82,13 +82,28 @@ abstract class Model
         return $this;
     }
 
-    protected function ___insert($props): int
+    protected function ___insert(array $props): int
     {
-        $clearData = $this->sqlBuilder->push('insert', $props);
-        $this->insertData = $clearData;
+        $this->insertData = $this->clearInsert($props);
+        $this->sqlBuilder->push('insert', $this->insertData);
+        
         $this->exec();
 
         return $this->getPDO()->lastInsertId();
+    }
+
+
+    private function clearInsert(array $props)
+    {
+        $result = [];
+        foreach ($props as $key => $value) {
+            if ($value === false)
+                continue;
+
+            $result[$key] = $value;
+        }
+
+        return $result;
     }
 
 
