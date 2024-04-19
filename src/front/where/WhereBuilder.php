@@ -13,6 +13,7 @@ class WhereBuilder
 
     private $options = [];
     private $tableName = false;
+    private ?string $scheme = null;
 
     function push($option, $props){
         $this->options[] = $this->whereOption($option, $props, $this->tableName);
@@ -37,6 +38,16 @@ class WhereBuilder
 
         
         return $result;
+    }
+
+
+
+
+
+
+
+    function setScheme(string $scheme){
+        $this->scheme = $scheme;
     }
 
 }
