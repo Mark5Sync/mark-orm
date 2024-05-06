@@ -34,17 +34,17 @@ class Transaction
     function rollBack()
     {
         $this->rollbackOnDestruct = false;
-        if ($this->isActive) {
+        if ($this->isActive)
             $this->pdo->rollBack();
 
-            $this->setActive(false);
-        }
+        $this->setActive(false);
     }
 
     function commit()
     {
         $this->rollbackOnDestruct = false;
-        $this->pdo->commit();
+        if ($this->isActive)
+            $this->pdo->commit();
 
         $this->setActive(false);
     }
