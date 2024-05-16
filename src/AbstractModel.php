@@ -15,14 +15,14 @@ abstract class ___class___ extends Model
     public string $table = '__table__';
     protected string $connectionProp = '__connectionProp__';
 
+
+
+    
     function select(...$props)
     {
         $this->___select($props);
         return $this;
     }
-
-
-
 
 
     /** 
@@ -46,41 +46,41 @@ abstract class ___class___ extends Model
     }
 
 
-    function selectDate(&$___string_date___)
-    {
-        $props = [$___restruct_string_date___];
-        $this->___selectDate($props);
-        return $this;
-    }
+    // function selectDate(?string $_ = null, &$___string_date___)
+    // {
+    //     $props = [$___restruct_string_date___];
+    //     $this->___selectDate($props);
+    //     return $this;
+    // }
 
 
     /** 
      * ... WHERE title LIKE \'%1%\' ...
      */
-    function like(&$___string___)
+    function like(?string $_ = null, &$___string___)
     {
         $props = [$___restruct_string___];
-        $this->___like($props);
+        $this->___like($_, $props);
         return $this;
     }
 
     /** 
      * ... WHERE id REGEXP \'1\' ...
      */
-    function regexp(&$___string___)
+    function regexp(?string $_ = null, &$___string___)
     {
         $props = [$___restruct_string___];
-        $this->___regexp($props);
+        $this->___regexp($_, $props);
         return $this;
     }
 
     /** 
      * ... WHERE id IN (1, 2, 3)
      */
-    function in(&$___array___)
+    function in(?string $_ = null, &$___array___)
     {
         $props = [$___restruct_array___];
-        $this->___in($props);
+        $this->___in($_, $props);
         return $this;
     }
 
@@ -88,10 +88,10 @@ abstract class ___class___ extends Model
     /** 
      * ... WHERE id IN (1, 2, 3)
      */
-    function notIn(&$___array___)
+    function notIn(?string $_ = null, &$___array___)
     {
         $props = [$___restruct_array___];
-        $this->___in($props, true);
+        $this->___in($_, $props, true);
         return $this;
     }
 
@@ -100,20 +100,20 @@ abstract class ___class___ extends Model
     /** 
      * IS NULL
      */
-    function isNull(&$___bool___)
+    function isNull(?string $_ = null, &$___bool___)
     {
         $props = [$___restruct_bool___];
-        $this->___isNull($props);
+        $this->___isNull($_, $props);
         return $this;
     }
 
     /** 
      * IS NOT NULL
      */
-    function isNotNull(&$___bool___)
+    function isNotNull(?string $_ = null, &$___bool___)
     {
         $props = [$___restruct_bool___];
-        $this->___isNotNull($props);
+        $this->___isNotNull($_, $props);
         return $this;
     }
 
@@ -126,20 +126,20 @@ abstract class ___class___ extends Model
     /** 
      * WHERE id = 1
      */
-    function where(&$___auto___)
+    function where(?string $_ = null, &$___auto___)
     {
         $props = [$___restruct_auto___];
-        $this->___where($props);
+        $this->___where($_, $props);
         return $this;
     }
 
     /** 
      * ... WHERE id = \'1\'
      */
-    function fwhere(&$___string___)
+    function fwhere(?string $_ = null, &$___string___)
     {
         $props = [$___restruct_string___];
-        $this->___where($props);
+        $this->___where($_, $props);
         return $this;
     }
 

@@ -5,7 +5,7 @@ namespace markorm\front\where;
 use marksync\provider\MarkInstance;
 
 
-#[MarkInstance('whereOption')]
+#[MarkInstance]
 class WhereOption
 {
 

@@ -12,7 +12,7 @@ use markorm\transact\TransactionController;
 trait transact {
     use provider;
 
-   function transaction(): Transaction { return new Transaction; }
-   function transactionController(): TransactionController { return new TransactionController; }
+   function createTransaction(): Transaction { return new Transaction; }
+   function createTransactionController(): TransactionController { return new TransactionController; }
 
 }

@@ -17,10 +17,10 @@ use markorm\tools\Format;
 trait tools {
     use provider;
 
-   function joinCascadeArray(): JoinCascadeArray { return new JoinCascadeArray; }
-   function connectionRecipient(): ConnectionRecipient { return new ConnectionRecipient; }
-   function shemeBuilder(string $table, array $tableProps): ShemeBuilder { return new ShemeBuilder($table, $tableProps); }
-   function page(): Page { return new Page; }
-   function _format(): Format { return new Format; }
+   function createJoinCascadeArray(): JoinCascadeArray { return new JoinCascadeArray; }
+   function createConnectionRecipient(): ConnectionRecipient { return new ConnectionRecipient; }
+   function createShemeBuilder(string $table, array $tableProps): ShemeBuilder { return new ShemeBuilder($table, $tableProps); }
+   function createPage(): Page { return new Page; }
+   function _createFormat(): Format { return new Format; }
 
 }

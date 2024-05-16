@@ -162,21 +162,6 @@ abstract class Model
 
 
 
-    function ___isNull($props)
-    {
-        $this->sqlBuilder->pushWhere('isNull', $props, false);
-        return $this;
-    }
-
-
-
-    function ___isNotNull($props)
-    {
-        $this->sqlBuilder->pushWhere('isNotNull', $props, false);
-        return $this;
-    }
-
-
 
     function ___orderBy($type, $props)
     {

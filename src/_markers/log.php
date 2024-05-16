@@ -10,6 +10,6 @@ use markorm\log\QueryLogs;
 trait log {
     use provider;
 
-   function queryLogs(): QueryLogs { return new QueryLogs; }
+   function createQueryLogs(): QueryLogs { return new QueryLogs; }
 
 }

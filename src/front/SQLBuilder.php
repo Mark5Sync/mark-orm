@@ -5,6 +5,7 @@ namespace markorm\front;
 use marksync\provider\Mark;
 use markorm\_markers\front;
 use markorm\Model;
+use markorm\sections\where\WhereItem;
 use markorm\tools\Page;
 use PDO;
 
@@ -15,7 +16,7 @@ class SQLBuilder
 
 
     private string $description = '';
-    private string $table;
+    public string $table;
 
     private $request = [];
     private $propsValues = [];
@@ -30,7 +31,6 @@ class SQLBuilder
     private $orderByColls = [];
 
     private $groupByProps = [];
-
 
 
 
@@ -81,8 +81,6 @@ class SQLBuilder
     function setTable(string $table)
     {
         $this->table = $table;
-        $this->whereBuilder->setTableName($table);
-        $this->joinBuilder->setTableName($table);
         $this->joinBuilder->setTableName($table);
     }
 
@@ -114,14 +112,14 @@ class SQLBuilder
     }
 
 
-    function pushWhere($option, $props, $useProps = true)
-    {
-        $props = $this->filter($option, $props);
-        $this->whereBuilder->push($option, $props);
+    // function pushWhere(WhereItem $props)
+    // {
+    //     $props = $this->filter($option, $props);
+    //     $this->whereBuilder->push($option, $props);
 
-        if ($useProps)
-            $this->pushToPropsValues($props);
-    }
+    //     if ($useProps)
+    //         $this->pushToPropsValues($props);
+    // }
 
     private function filter($option, $values)
     {
@@ -152,7 +150,7 @@ class SQLBuilder
         return $result;
     }
 
-    private function pushToPropsValues(array $props)
+    function pushToPropsValues(array $props)
     {
         foreach ($props as $prop) {
             $this->propsValues[$prop['dataColl']] = $prop['value'];
@@ -326,7 +324,7 @@ class SQLBuilder
     {
         $result = '';
         if ($where = $this->whereMix())
-            $result = " WHERE " . implode(' AND ', $where);
+            $result = " WHERE " . implode(' ', $where);
 
 
         if (!empty($this->groupByProps)) {
