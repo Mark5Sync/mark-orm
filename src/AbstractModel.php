@@ -29,9 +29,10 @@ abstract class ___class___ extends Model
     {
         $result = $this->sel(...$this->___filterRowProps([$___restruct_bind___]))->limit(1)->fetch();
 
-		foreach ($result as $prop => $value) {
-			$$prop = $value;
-		}
+        if ($result)
+            foreach ($result as $prop => $value) {
+                $$prop = $value;
+            }
     }
 
 
