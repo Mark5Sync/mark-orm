@@ -7,23 +7,41 @@ use marksync\provider\MarkInstance;
 
 
 #[MarkInstance]
-class WhereItem 
+class WhereItem
 {
     public string $scheme;
     public array $props;
-    private array $queryProps;
+
     private bool $exportProps = true;
     public bool $isValid = true;
+    private string $compareOperator = '=';
 
     function __construct(private string $tableName, private $method, array $props, ?string $scheme = null, public $useProps = true)
     {
+        if ($method == 'where' && $scheme && $this->checkUseSchemeAsMethod($scheme)) {
+            $this->compareOperator = $scheme;
+            $scheme = null;
+        }
+
         $this->props = $this->filter($this->method, $props);
-        $this->queryProps = $this->getQueryProps();
 
-        if (empty($this->queryProps) && !$scheme)
+
+        $this->scheme = $scheme ? $this->handleScheme($scheme) : implode(' AND ', $this->getQueryProps());
+        if (!$this->scheme)
             return $this->isValid = false;
+    }
 
-        $this->scheme = $scheme ? $this->handleScheme($scheme) : implode(' AND ', $this->queryProps);
+    private function checkUseSchemeAsMethod(string $scheme)
+    {
+        switch ($scheme) {
+            case '=':
+            case '<':
+            case '>':
+            case '<=':
+            case '>=':
+            case '!=':
+                return true;
+        }
     }
 
 
@@ -31,7 +49,13 @@ class WhereItem
     {
         $result = $scheme;
 
-        foreach ($this->queryProps as $prop) {
+        foreach ($this->props as $prop) {
+            $result = preg_replace('/\?k/', "{$this->tableName}.$prop[coll]", $result, 1);
+            $result = preg_replace('/\?v/', ":$prop[dataColl]", $result, 1);
+        }
+
+        $queryProps = $this->getQueryProps();
+        foreach ($queryProps as $prop) {
             $result = preg_replace('/\?/', $prop, $result, 1);
         }
 
@@ -48,7 +72,7 @@ class WhereItem
         switch ($this->method) {
             case 'where':
                 foreach ($this->props as $coll) {
-                    $option = is_null($coll['value']) ? 'IS' : '=';
+                    $option = is_null($coll['value']) ? 'IS' : $this->compareOperator;
                     $result[] = "{$this->tableName}.$coll[coll] $option :$coll[dataColl]";
                 }
                 break;
@@ -61,7 +85,7 @@ class WhereItem
             case 'notIn':
                 $isNot = $this->method == 'notIn';
                 $notOption = $isNot ? 'NOT' : '';
-            
+
                 foreach ($this->props as $coll) {
                     $arrayColl = $this->arrayColl($coll);
 
@@ -155,4 +179,3 @@ class WhereItem
         return $this->scheme;
     }
 }
-
