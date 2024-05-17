@@ -13,11 +13,16 @@ class WhereItem
     public array $props;
     private array $queryProps;
     private bool $exportProps = true;
+    public bool $isValid = true;
 
     function __construct(private string $tableName, private $method, array $props, ?string $scheme = null, public $useProps = true)
     {
         $this->props = $this->filter($this->method, $props);
         $this->queryProps = $this->getQueryProps();
+
+        if (empty($this->queryProps) && !$scheme)
+            return $this->isValid = false;
+
         $this->scheme = $scheme ? $this->handleScheme($scheme) : implode(' AND ', $this->queryProps);
     }
 
@@ -60,7 +65,7 @@ class WhereItem
                 foreach ($this->props as $coll) {
                     $arrayColl = $this->arrayColl($coll);
 
-                    if ($isNot && empty($arrayColl))
+                    if ($isNot && !$arrayColl)
                         continue;
 
                     $result[] = "{$this->tableName}.$coll[coll] {$notOption} IN ($arrayColl)";

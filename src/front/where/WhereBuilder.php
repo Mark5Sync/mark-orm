@@ -24,6 +24,9 @@ class WhereBuilder
 
     function push(WhereItem $item, string $operator = 'AND')
     {
+        if (!$item->isValid)
+            return;
+
         $this->options[] = $operator;
         $this->options[] = $item;
 
