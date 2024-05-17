@@ -34,7 +34,7 @@ class ShemeBuilController
                 $relationship = $this->getRelationship();
 
                 foreach ($tables as $table => $tableProps) {
-                    $this->shemeBuilder($table, $tableProps)
+                    $this->createShemeBuilder($table, $tableProps)
                         ->injectConnection($this->pdoMark)
                         ->setRelationship(isset($relationship[$table]) ? $relationship[$table] : null)
                         ->createAbstractModel($projectFolder, $projectNamespace);

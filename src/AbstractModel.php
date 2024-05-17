@@ -17,11 +17,21 @@ abstract class ___class___ extends Model
 
 
 
-    
+
     function select(...$props)
     {
         $this->___select($props);
         return $this;
+    }
+
+    
+    function selectRow(&$___bind___)
+    {
+        $result = $this->sel(...$this->___filterRowProps([$___restruct_bind___]))->limit(1)->fetch();
+
+		foreach ($result as $prop => $value) {
+			$$prop = $value;
+		}
     }
 
 

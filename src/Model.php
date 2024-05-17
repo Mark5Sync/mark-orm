@@ -243,4 +243,16 @@ abstract class Model
     {
         $this->sqlBuilder->whereBuilder->setScheme($scheme);
     }
+
+
+    protected function ___filterRowProps(array $props){
+        $result = [];
+
+        foreach ($props as $prop => $value) {
+            if (is_null($value))
+                $result[$prop] = 1;
+        }
+
+        return $result;
+    }
 }

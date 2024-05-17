@@ -69,8 +69,8 @@ class ShemeBuilder
         }
 
         $colls = array_column($this->tableProps, 'coll');
-        foreach (['auto', 'bool', 'array', 'string'] as $propsType) {
-            $input = $this->getMethodProps($propsType, $colls, ' = false', $propsType == 'bool' ? '' : 'false | ');
+        foreach (['auto', 'bool', 'array', 'string', 'bind'] as $propsType) {
+            $input = $this->getMethodProps($propsType, $colls, ' = false', in_array($propsType, ['bool', 'bind']) ? '' : 'false | ');
             $restruct = $split . implode(",$split", array_map(fn ($coll) => "'$coll' => \$$coll", $colls));
 
             $abstactCode = str_replace("&\$___{$propsType}___", $input, $abstactCode);
@@ -140,9 +140,10 @@ class ShemeBuilder
             $props =  $split . implode(",$split", $props);
             return $props;
         }
+    
+        $propType = $propType == 'bind' ? '&' : "$propType ";
 
-
-        $split = "\n\t\t\t{$nullType}$propType \$";
+        $split = "\n\t\t\t{$nullType}$propType\$";
         $props =  $split . implode("$default,$split", $colls) . $default;
         return $props;
     }
