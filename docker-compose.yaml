@@ -1,0 +1,34 @@
+version: '3.7'
+
+services:
+  php-fpm:
+    image: php:8.2-fpm
+    volumes:
+      - ./app:/var/www/html
+    working_dir: /var/www/html
+    networks:
+      - app-network
+
+  composer:
+    image: composer
+    volumes:
+      - ./app:/app
+    working_dir: /app
+    networks:
+      - app-network
+    environment:
+      - PATH=$PATH:/usr/local/bin/composer
+
+  postgres:
+    image: postgres
+    environment:
+      POSTGRES_USER: ${USER}
+      POSTGRES_PASSWORD: ${PASSWORD}
+      POSTGRES_DB: ${DB}
+    networks:
+      - app-network
+    volumes:
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+
+networks:
+  app-network:

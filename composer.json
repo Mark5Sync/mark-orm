@@ -1,9 +1,10 @@
 {
-    "name": "marksync\/orm",
-    "description": "Orm system",
+    "name": "marksync\/gleam",
+    "description": "gleam",
     "autoload": {
         "psr-4": {
-            "markorm\\": "src\/"
+            "markorm\\": "src\/",
+            "testapp\\": "app\/"
         }
     },
     "authors": [
@@ -15,7 +16,8 @@
     "require": {
         "marksync\/provider": "^1.0",
         "vlucas\/phpdotenv": "^5.6",
-        "composer\/class-map-generator": "^1.1"
+        "composer\/class-map-generator": "^1.1",
+        "illuminate/database": "^11.7"
     },
     "scripts": {
         "mark": "php vendor\/bin\/mark",

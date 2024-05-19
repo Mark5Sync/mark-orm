@@ -13,14 +13,6 @@ use markorm\transact\Transaction;
 
 abstract class Model
 {
-    use front;
-
-    use select;
-    use where;
-    use join;
-    use exec;
-
-    use log;
 
 
 
