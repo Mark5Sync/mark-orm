@@ -3,21 +3,18 @@
 
 namespace testapp;
 
-
 use testapp\_markers\models;
+
 require '../vendor/autoload.php';
 
 
-new class 
+new class
 {
     use models;
 
     function __construct()
     {
-        // $user = $this->user;
-
-        // $userArray = $user ? $user->toArray() : null;
-
-        // print_r($userArray);
+        $result = $this->usersModel->sel(name: 1, id: 1)->fetch();
+        print_r($result);
     }
 };

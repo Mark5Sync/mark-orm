@@ -61,18 +61,6 @@ class ShemeBuilController
             $projectAbstractFolder, 
             "{$namespace}\models\_abstract_models",
         );
-
-
-        // return [
-        //     'model' => [
-        //         'folder' => $projectFolder, 
-        //         'namespace' => "{$namespace}/models", 
-        //     ],
-        //     'abstract' => [
-        //         'folder' => "{$namespace}/models/_abstract_models",
-        //         'namespace' => $projectAbstractFolder, 
-        //     ]
-        // ];
     }
 
 

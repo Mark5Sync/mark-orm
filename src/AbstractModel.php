@@ -6,23 +6,27 @@ use markorm\Model;
 use ___markerClass___;
 
 
+
 abstract class ___class___ extends Model
 {
     use __connectionMarker__;
 
     protected ?array $relationship = __rel__;
 
-    public string $table = '__table__';
+    protected string $table = '__table__';
     protected string $connectionProp = '__connectionProp__';
 
 
-
-
-    function select(...$props)
+    protected function getEloquentModel(): ___class___Eloquent
     {
-        $this->___select($props);
-        return $this;
+        return new ___class___Eloquent;
     }
+
+    // function select(...$props)
+    // {
+    //     $this->___select($props);
+    //     return $this;
+    // }
 
     
     function selectRow(&$___bind___)
@@ -160,7 +164,7 @@ abstract class ___class___ extends Model
     /** 
      * ...SET id = 1
      */
-    function update(&$___auto___)
+    function updt(&$___auto___)
     {
         $props = [$___restruct_auto___];
         return $this->___update($props);
@@ -295,3 +299,5 @@ abstract class ___class___ extends Model
         return $this;
     }
 }
+
+

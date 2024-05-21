@@ -11,6 +11,7 @@ use Illuminate\Container\Container;
 abstract class ConnectionSource implements PDOAgent
 {
 
+    private $isConnected = false;
 
     function getPDO()
     {
@@ -31,11 +32,13 @@ abstract class ConnectionSource implements PDOAgent
 
     function createGlobalconnection()
     {
+        if ($this->isConnected)
+            return;
+
         $capsule = new Capsule;
 
         $capsule->addConnection($this->getConnection());
 
-        $capsule->setEventDispatcher(new Dispatcher(new Container));
         $capsule->setAsGlobal();
         $capsule->bootEloquent();
     }

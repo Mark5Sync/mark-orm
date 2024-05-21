@@ -6,23 +6,27 @@ use markorm\Model;
 use testapp\_markers\tools;
 
 
+
 abstract class AbstractUsersModel extends Model
 {
     use tools;
 
     protected ?array $relationship = null;
 
-    public string $table = 'users';
+    protected string $table = 'users';
     protected string $connectionProp = 'myConnection';
 
 
-
-
-    function select(...$props)
+    protected function getEloquentModel(): AbstractUsersModelEloquent
     {
-        $this->___select($props);
-        return $this;
+        return new AbstractUsersModelEloquent;
     }
+
+    // function select(...$props)
+    // {
+    //     $this->___select($props);
+    //     return $this;
+    // }
 
     
     function selectRow(
@@ -226,7 +230,7 @@ abstract class AbstractUsersModel extends Model
     /** 
      * ...SET id = 1
      */
-    function update(
+    function updt(
 			 false | int $id = false,
 			 false | string $name = false,
 			 false | string $email = false)
@@ -397,3 +401,5 @@ abstract class AbstractUsersModel extends Model
         return $this;
     }
 }
+
+

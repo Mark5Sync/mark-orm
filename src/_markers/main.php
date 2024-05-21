@@ -1,2 +1,2 @@
-<?php namespace ___namespace___\_markers;
+<?php namespace markorm\_markers;
 trait main{}
