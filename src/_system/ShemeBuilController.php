@@ -44,23 +44,30 @@ class ShemeBuilController
     }
 
 
-    function createProjectFolder($projectSrcFolder, $namespace) : ModelConfig
+    function createProjectFolder($projectSrcFolder, $namespace): ModelConfig
     {
-        $projectFolder = "{$this->root}/{$projectSrcFolder}models/";
-        $projectAbstractFolder = "{$projectFolder}/_abstract_models";
+        $projectFolder = $this->realPath('/', $this->root, $projectSrcFolder, 'models');
+        $projectAbstractFolder = $this->realPath('/', $projectFolder, '_abstract_models');
 
         if (file_exists($projectAbstractFolder))
             $this->rrmdir($projectAbstractFolder);
 
         mkdir($projectAbstractFolder, 0777, true);
 
-
         return new ModelConfig(
             $projectFolder,
-            "{$namespace}\models",
-            $projectAbstractFolder, 
-            "{$namespace}\models\_abstract_models",
+            $this->realPath('\\', $namespace, 'models'),
+            $projectAbstractFolder,
+            $this->realPath('\\', $namespace, 'models', '_abstract_models'),
         );
+    }
+
+
+    function realPath($splitter, ...$array)
+    {
+        $result = array_reduce($array, fn ($acc, $itm) => [...$acc, ...explode($splitter, $itm)], []);
+        $result = implode($splitter, [$result[0], ...array_filter(array_slice($result, 1), fn ($itm) => $itm)]);
+        return $result;
     }
 
 
