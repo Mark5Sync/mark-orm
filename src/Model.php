@@ -1,14 +1,15 @@
 <?php
 
+
 namespace markorm;
 
-use markorm\_markers\model as _markersModel;
-use markorm\_system\ConnectionSource;
+use markorm\_markers\model as markersModel;
 use markorm\model\Connection;
+
 
 abstract class Model extends Connection
 {
-    use _markersModel;
+    use markersModel;
 
 
     function ___sel(array $props)
