@@ -115,9 +115,10 @@ class ShemeBuilder
             <?php
 
             namespace $namespace;
-
             use Illuminate\Database\Eloquent\Model as EloquentModel;
+            use marksync\provider\NotMark;
 
+            #[NotMark]
             class {$class}Eloquent extends EloquentModel
             {
                 protected \$table = '$this->table';

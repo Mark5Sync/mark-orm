@@ -14,7 +14,7 @@ new class
 
     function __construct()
     {
-        $result = $this->usersModel->sel(name: 1, id: 1)->fetch();
+        $result = $this->usersModel->sel(name: 1, email: 1)->fetch();
         print_r($result);
     }
 };
