@@ -22,7 +22,7 @@ abstract class ConnectionSource implements PDOAgent
         ] = $this->getConnection();
 
         return new \PDO(
-            "pgsql:host=$host;dbname=$database",
+            "mysql:host=$host;dbname=$database",
             $username,
             $password
         );

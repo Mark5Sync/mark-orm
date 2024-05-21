@@ -25,7 +25,7 @@ class ShemeBuilController
                 die("$folder - ConnectionSource не найдено");
 
 
-            [$projectFolder, $projectNamespace, $projectNamespaceAbstract] = $this->createProjectFolder($folder, $namespace);
+            $config = $this->createProjectFolder($folder, $namespace);
 
             foreach ($connections as $connectionSourceClass) {
                 $this->applyConnection($connectionSourceClass);
@@ -37,24 +37,42 @@ class ShemeBuilController
                     $this->createShemeBuilder($table, $tableProps)
                         ->injectConnection($this->pdoMark)
                         ->setRelationship(isset($relationship[$table]) ? $relationship[$table] : null)
-                        ->createAbstractModel($projectFolder, $projectNamespace);
+                        ->createAbstractModel($config);
                 }
             }
         }
     }
 
 
-    function createProjectFolder($projectSrcFolder, $namespace)
+    function createProjectFolder($projectSrcFolder, $namespace) : ModelConfig
     {
-        
         $projectFolder = "{$this->root}/{$projectSrcFolder}models/";
+        $projectAbstractFolder = "{$projectFolder}/_abstract_models";
 
-        if (file_exists("{$projectFolder}/_abstract_models"))
-            $this->rrmdir("{$projectFolder}/_abstract_models");
+        if (file_exists($projectAbstractFolder))
+            $this->rrmdir($projectAbstractFolder);
 
-        mkdir("{$projectFolder}/_abstract_models", 0777, true);
+        mkdir($projectAbstractFolder, 0777, true);
 
-        return [$projectFolder, "{$namespace}/models", "{$namespace}/models/_abstract_models"];
+
+        return new ModelConfig(
+            $projectFolder,
+            "{$namespace}\models",
+            $projectAbstractFolder, 
+            "{$namespace}\models\_abstract_models",
+        );
+
+
+        // return [
+        //     'model' => [
+        //         'folder' => $projectFolder, 
+        //         'namespace' => "{$namespace}/models", 
+        //     ],
+        //     'abstract' => [
+        //         'folder' => "{$namespace}/models/_abstract_models",
+        //         'namespace' => $projectAbstractFolder, 
+        //     ]
+        // ];
     }
 
 
@@ -107,7 +125,6 @@ class ShemeBuilController
         $this->pdoMark = new ReflectionMark($connectionSourceClass);
 
         $this->pdo = null;
-        /** @var ConnectionSource $connectionSourceClass */
         $this->pdo = (new ($connectionSourceClass))->getPDO();
 
         echo "\use connection $connectionSourceClass\n";

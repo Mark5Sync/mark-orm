@@ -3,6 +3,7 @@
 
 namespace markorm\tools;
 
+use markorm\_system\ModelConfig;
 use marksync\provider\MarkInstance;
 use marksync\provider\ReflectionMark;
 
@@ -41,14 +42,40 @@ class ShemeBuilder
         return var_export($this->relationship, true);
     }
 
-    function createAbstractModel($folder, $namespace)
+    function createAbstractModel(ModelConfig $config)
     {
+        $abstractClass = $this->getAbstractClassName();
+        $code = $this->getAbstractCode($abstractClass, $config->abstractNamespace);
+        file_put_contents("{$config->abstractFolder}/$abstractClass.php", $code);
+
+
         $class = $this->getClassName();
-        file_put_contents("$folder/$class.php", $this->getCode($class, $namespace));
+        $modelFileName = "{$config->modelFolder}/$class.php";
+        if (!file_exists($modelFileName)) {
+            $code = $this->getCode($class, $config->modelNamespace);
+            file_put_contents($modelFileName, $code);
+        }
     }
 
 
-    function getCode($class, $namespace)
+    function getCode(string $class, string $namespace)
+    {
+        return <<<PHP
+        <?php
+
+        namespace {$namespace};
+
+        use {$namespace}\_abstract_models\Abstract$class;
+
+        class $class extends Abstract$class {
+
+        }
+
+        PHP;
+    }
+
+
+    function getAbstractCode($class, $namespace)
     {
         $split = "\n\t\t\t";
         $rel = $this->getRelationship();
@@ -82,6 +109,18 @@ class ShemeBuilder
 
 
     private function getClassName()
+    {
+        $words = explode('_', $this->table);
+        $class = '';
+        foreach ($words as $word) {
+            $class .= ucfirst($word);
+        }
+
+        return "{$class}Model";
+    }
+
+
+    private function getAbstractClassName()
     {
         $words = explode('_', $this->table);
         $class = '';
@@ -133,14 +172,14 @@ class ShemeBuilder
             $props = [];
             foreach ($this->tableProps as $coll) {
                 $phpType = $this->convertToPHPType($coll['type']) . " \${$coll['coll']}{$default}";
-                $props[] = ($coll['isNull'] == 'YES' ? 'null | ' : ''). $phpType;
+                $props[] = ($coll['isNull'] == 'YES' ? 'null | ' : '') . $phpType;
             }
 
             $split = "\n\t\t\t false | ";
             $props =  $split . implode(",$split", $props);
             return $props;
         }
-    
+
         $propType = $propType == 'bind' ? '&' : "$propType ";
 
         $split = "\n\t\t\t{$nullType}$propType\$";
