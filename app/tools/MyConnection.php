@@ -1,7 +1,7 @@
 <?php
 
 
-namespace testapp;
+namespace testapp\tools;
 
 use markorm\_system\ConnectionSource;
 
@@ -10,11 +10,11 @@ class MyConnection extends ConnectionSource {
     function getConnection(): array
     {
         return [
-            'driver'    => 'mysql',
-            'host'      => '127.0.0.1',
-            'database'  => 'your_database',
-            'username'  => 'your_username',
-            'password'  => 'your_password',
+            'driver'    => 'postgres',
+            'host'      => 'postgres',
+            'database'  => 'mydatabase',
+            'username'  => 'myuser',
+            'password'  => 'mypassword',
             'charset'   => 'utf8',
             'collation' => 'utf8_unicode_ci',
             'prefix'    => '',

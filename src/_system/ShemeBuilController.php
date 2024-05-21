@@ -25,7 +25,7 @@ class ShemeBuilController
                 die("$folder - ConnectionSource не найдено");
 
 
-            [$projectFolder, $projectNamespace] = $this->createProjectFolder($folder, $namespace);
+            [$projectFolder, $projectNamespace, $projectNamespaceAbstract] = $this->createProjectFolder($folder, $namespace);
 
             foreach ($connections as $connectionSourceClass) {
                 $this->applyConnection($connectionSourceClass);
@@ -46,14 +46,15 @@ class ShemeBuilController
 
     function createProjectFolder($projectSrcFolder, $namespace)
     {
-        $projectFolder = "{$this->root}/{$projectSrcFolder}_abstract_models";
+        
+        $projectFolder = "{$this->root}/{$projectSrcFolder}models/";
 
-        if (file_exists($projectFolder))
-            $this->rrmdir($projectFolder);
+        if (file_exists("{$projectFolder}/_abstract_models"))
+            $this->rrmdir("{$projectFolder}/_abstract_models");
 
-        mkdir($projectFolder, 0777, true);
+        mkdir("{$projectFolder}/_abstract_models", 0777, true);
 
-        return [$projectFolder, "{$namespace}_abstract_models"];
+        return [$projectFolder, "{$namespace}/models", "{$namespace}/models/_abstract_models"];
     }
 
 
@@ -106,7 +107,8 @@ class ShemeBuilController
         $this->pdoMark = new ReflectionMark($connectionSourceClass);
 
         $this->pdo = null;
-        $this->pdo = (new ($connectionSourceClass))->pdo;
+        /** @var ConnectionSource $connectionSourceClass */
+        $this->pdo = (new ($connectionSourceClass))->getPDO();
 
         echo "\use connection $connectionSourceClass\n";
     }

@@ -8,9 +8,28 @@ use Illuminate\Container\Container;
 
 
 
-abstract class ConnectionSource implements PDOAgent {
+abstract class ConnectionSource implements PDOAgent
+{
 
-    final function __construct()
+
+    function getPDO()
+    {
+        [
+            'host' => $host,
+            'database' => $database,
+            'username' => $username,
+            'password' => $password,
+        ] = $this->getConnection();
+
+        return new \PDO(
+            "pgsql:host=$host;dbname=$database",
+            $username,
+            $password
+        );
+    }
+
+
+    function createGlobalconnection()
     {
         $capsule = new Capsule;
 
@@ -20,5 +39,4 @@ abstract class ConnectionSource implements PDOAgent {
         $capsule->setAsGlobal();
         $capsule->bootEloquent();
     }
-
 }

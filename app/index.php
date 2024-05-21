@@ -1,22 +1,23 @@
 <?php
 
-use Illuminate\Database\Eloquent\Model;
 
+namespace testapp;
+
+
+use testapp\_markers\models;
 require '../vendor/autoload.php';
 
 
-// Модель пользователя
-class User extends Model
+new class 
 {
-    protected $table = 'users';
-    public $timestamps = true;
-}
+    use models;
 
-// Получение пользователя с id 4
-$user = User::where('id', 4)->first();
+    function __construct()
+    {
+        // $user = $this->user;
 
-// Преобразование пользователя в массив
-$userArray = $user ? $user->toArray() : null;
+        // $userArray = $user ? $user->toArray() : null;
 
-// Вывод массива пользователя
-print_r($userArray);
+        // print_r($userArray);
+    }
+};
