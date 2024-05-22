@@ -31,11 +31,11 @@ abstract class ___class___ extends Model
     
     function selectRow(&$___bind___)
     {
-        $result = $this->sel(...$this->___filterRowProps([$___restruct_bind___]))->limit(1)->fetch();
+        $_cijcbb32ojsallk4ms = $this->sel(...$this->request->filter([$___restruct_bind___], false, 1))->fetch();
 
-        if ($result)
-            foreach ($result as $prop => $value) {
-                $$prop = $value;
+        if ($_cijcbb32ojsallk4ms)
+            foreach ($_cijcbb32ojsallk4ms as $_jjfj23i2nnm2nm3nm4 => $_jjjfjij2i2i3j4nnvkxjlkjd) {
+                $$_jjfj23i2nnm2nm3nm4 = $_jjjfjij2i2i3j4nnvkxjlkjd;
             }
     }
 

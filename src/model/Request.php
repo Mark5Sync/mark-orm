@@ -2,13 +2,19 @@
 
 namespace markorm\model;
 
+use markorm\Model;
 use marksync\provider\Mark;
 
-#[Mark(mode: Mark::LOCAL)]
+#[Mark(mode: Mark::LOCAL, args: ['parent'])]
 class Request
 {
 
     private $stack = [];
+
+
+    function __construct(private Model $model)
+    {
+    }
 
 
     function set(string $key, $value)
@@ -26,15 +32,25 @@ class Request
     }
 
 
-    function filter($props, $except): array
+    function filter($props, $except, mixed $set = false): array
     {
         $result = [];
 
         foreach ($props as $key => $value) {
-            if ($value != $except)
-                $result[$key] = $value;
+            if ($value !== $except)
+                $result[$key] = $set ? $set : $value;
         }
 
         return $result;
+    }
+
+
+
+
+
+
+    function build()
+    {
+        return $this->model->getModel();
     }
 }

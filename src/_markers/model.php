@@ -12,7 +12,7 @@ use markorm\model\Connection;
 trait model {
     use provider;
 
-   function _createRequest(): Request { return new Request; }
+   function _createRequest(): Request { return new Request($this); }
    function createConnection(): Connection { return new Connection; }
 
 }

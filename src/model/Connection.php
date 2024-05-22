@@ -3,6 +3,7 @@
 namespace markorm\model;
 
 use Illuminate\Database\Eloquent\Model as EloquentModel;
+use markorm\_system\ConnectionSource;
 use marksync\provider\NotMark;
 
 #[NotMark]

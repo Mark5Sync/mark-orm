@@ -14,7 +14,7 @@ new class
 
     function __construct()
     {
-        $result = $this->usersModel->sel(name: 1, email: 1)->fetch();
-        print_r($result);
+        $this->usersModel->where(id: 4, name: 22)->selectRow(name: $name);  //sel(name: 1)->fetch();
+        echo "$name\n";
     }
 };

@@ -34,14 +34,14 @@ abstract class AbstractUsersModel extends Model
 			&$name = false,
 			&$email = false)
     {
-        $result = $this->sel(...$this->___filterRowProps([
+        $_cijcbb32ojsallk4ms = $this->sel(...$this->request->filter([
 			'id' => $id,
 			'name' => $name,
-			'email' => $email]))->limit(1)->fetch();
+			'email' => $email], false, 1))->fetch();
 
-        if ($result)
-            foreach ($result as $prop => $value) {
-                $$prop = $value;
+        if ($_cijcbb32ojsallk4ms)
+            foreach ($_cijcbb32ojsallk4ms as $_jjfj23i2nnm2nm3nm4 => $_jjjfjij2i2i3j4nnvkxjlkjd) {
+                $$_jjfj23i2nnm2nm3nm4 = $_jjjfjij2i2i3j4nnvkxjlkjd;
             }
     }
 
