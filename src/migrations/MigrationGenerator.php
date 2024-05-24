@@ -40,9 +40,9 @@ class MigrationGenerator
         $filename = $className . '.php';
 
 
-        $migrationCode = $this->generateClassCode("$this->savePath/$className", $table);
+        $migrationCode = $this->generateClassCode($className, $table);
 
-        file_put_contents($filename, $migrationCode);
+        file_put_contents("$this->savePath/$filename", $migrationCode);
     }
 
 
