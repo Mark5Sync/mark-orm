@@ -12,7 +12,6 @@ use marksync\provider\NotMark;
 abstract class Connection
 {
 
-    protected string $table;
     protected string $connectionProp;
     private ?Builder $activeModel = null;
 
