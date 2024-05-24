@@ -11,26 +11,66 @@ abstract class Model extends Connection
 {
     use markersModel;
 
-    function ___sel(array $props)
+    private ?string $query = '';
+
+    protected function ___sel(array $props)
     {
-        $this->request->set('select', array_keys($this->request->filter($props, false)));
+        $this->getModel()->select(
+            ...array_keys(
+                $this->request->filter($props, false)
+            )
+        );
     }
 
-    function ___where(?string $operator, array $props)
+
+    protected function ___where(string $comparisonOperator, string $logicalOperatorAnd, array $props)
     {
-        $this->request->set('where', array_keys($this->request->filter($props, false)));
+        $props = $this->request->filter($props, false);
+        $model = $this->getModel();
+
+        foreach ($props as $coll => $value) {
+            $model->where(
+                $coll,
+                $comparisonOperator,
+                $value,
+                $logicalOperatorAnd
+            );
+        }
+    }
+
+
+    // protected function ___in()
+    // {
+    //     $this->getModel()->whereIn('name', ['masha', 'natasha']);
+    // }
+
+    function query(?string &$query)
+    {
+        $this->query = $query;
+        return $this;
+    }
+
+    private function bindQuery()
+    {
+        if (!is_null($this->query))
+            return;
+
+        $cloneModel = clone $this->getModel();
+
+        $this->query = $cloneModel->get()->toSql();
     }
 
 
     function fetch()
     {
-        return $this->request->build()->first($this->request->get('select', '*'))->toArray();
+        $this->bindQuery();
+        return $this->getModel()->first()->toArray();
     }
+
 
     function fetchAll()
     {
-        return $this->request->build()->get($this->request->get('select', '*'))->toArray();
+        $this->bindQuery();
+        return $this->getModel()->get()->toArray();
     }
-
-
 }

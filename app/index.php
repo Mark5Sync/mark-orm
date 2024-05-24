@@ -14,7 +14,9 @@ new class
 
     function __construct()
     {
-        $this->usersModel->where(id: 4, name: 22)->selectRow(name: $name);  //sel(name: 1)->fetch();
-        echo "$name\n";
+        $data = $this->usersModel->query($sql)->sel(name: 1)->fetch();
+        print_r($data);
+        // $this->usersModel->where(id: 4, name: 22)->selectRow(name: $name);  //sel(name: 1)->fetch();
+        // echo "$name\n";
     }
 };

@@ -2,19 +2,22 @@
 
 namespace markorm\model;
 
-use Illuminate\Database\Eloquent\Model as EloquentModel;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\DB;
 use markorm\_system\ConnectionSource;
 use marksync\provider\NotMark;
 
 #[NotMark]
-class Connection
+abstract class Connection
 {
 
+    protected string $table;
     protected string $connectionProp;
-    private ?EloquentModel $activeModel = null;
+    private ?Builder $activeModel = null;
 
 
-    function getModel(): EloquentModel
+    function getModel(): Builder
     {
         if ($this->activeModel)
             return $this->activeModel;
@@ -23,12 +26,14 @@ class Connection
         $connection = $this->{$this->connectionProp};
         $connection = $connection->createGlobalconnection();
 
-        return $this->activeModel = $this->getEloquentModel();
+        
+        return $this->activeModel = $this->getEloquentModel()->newQuery();
     }
 
 
-    protected function getEloquentModel(): EloquentModel
+    protected function getEloquentModel(): Model
     {
-        return new EloquentModel;
+        return new Model;
     }
+
 }
