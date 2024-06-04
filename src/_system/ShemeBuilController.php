@@ -114,23 +114,28 @@ class ShemeBuilController
 
     function findTables()
     {
-        $stmt = $this->pdo->prepare("SELECT 
-                colls.TABLE_NAME as 'table',
-                colls.COLUMN_NAME as 'coll',
-                colls.COLUMN_DEFAULT as 'default',
-                colls.DATA_TYPE as 'type',
-                colls.COLUMN_TYPE as 'collType',
-                colls.IS_NULLABLE as 'isNull',
-                colls.COLUMN_COMMENT as 'comment',
-                colls.EXTRA as 'extra'
+        $stmt = $this->pdo->prepare(
+            <<<SQL
+            SELECT
 
-            FROM INFORMATION_SCHEMA.TABLES as tables
+                colls.table_name AS table, 
+                colls.column_name AS "coll", 
+                colls.column_default AS "default", 
+                colls.data_type AS "type", 
+                colls.udt_name AS "collType",
+                colls.is_nullable AS "isNull", 
+                pg_catalog.col_description(colls.table_schema::regnamespace::oid, colls.ordinal_position::int) AS "comment",
+                colls.character_maximum_length AS "extra"
 
-            LEFT JOIN INFORMATION_SCHEMA.COLUMNS as colls
-            ON tables.TABLE_NAME = colls.TABLE_NAME
-
-            WHERE TABLE_TYPE='BASE TABLE'
-        ");
+            FROM information_schema.tables AS tables
+            
+            LEFT JOIN information_schema.columns AS colls
+            ON tables.table_name = colls.table_name AND tables.table_schema = colls.table_schema
+            
+            WHERE tables.table_type = 'BASE TABLE'
+            AND tables.table_schema NOT IN ('pg_catalog', 'information_schema');
+            SQL
+        );
         $stmt->execute();
 
         $result = [];
@@ -144,19 +149,27 @@ class ShemeBuilController
         return $result;
     }
 
+
     private function getRelationship()
     {
-        $smtp = $this->pdo->prepare("
+        $smtp = $this->pdo->prepare(
+            <<<SQL
             SELECT
-                table_name,
-                column_name,
-                referenced_table_name,
-                referenced_column_name
+                kcu.table_name,
+                kcu.column_name,
+                ccu.table_name AS referenced_table_name,
+                ccu.column_name AS referenced_column_name
             FROM
-                information_schema.key_column_usage
-
-            WHERE referenced_table_name is not NULL
-        ");
+                information_schema.key_column_usage AS kcu
+            JOIN
+                information_schema.constraint_column_usage AS ccu
+            ON
+                kcu.constraint_name = ccu.constraint_name
+                AND kcu.table_schema = ccu.table_schema
+            WHERE
+                kcu.position_in_unique_constraint IS NOT NULL;
+            SQL
+        );
 
         $smtp->execute();
 

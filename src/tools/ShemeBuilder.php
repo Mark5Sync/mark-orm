@@ -154,12 +154,14 @@ class ShemeBuilder
     private function convertToPHPType($sqlType)
     {
         switch ($sqlType) {
+            case 'integer':
             case 'int':
             case 'bigint':
                 return 'int';
 
             case 'date':
             case 'datetime':
+            case 'timestamp without time zone':
                 return 'string';
 
             case 'float':
@@ -169,6 +171,7 @@ class ShemeBuilder
             case 'text':
             case 'longtext':
             case 'varchar':
+            case 'character varying':
                 return 'string';
 
             default:
